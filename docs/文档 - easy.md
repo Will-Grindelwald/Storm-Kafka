@@ -9,6 +9,7 @@
 ### 0.2 系统简介
 
 系统版本:
+
     OS:        CentOS 7 1511版
     Python:    2.7.5 (CentOS 7 自带)
     Java:      1.8.0_65 (CentOS 7 自带)
