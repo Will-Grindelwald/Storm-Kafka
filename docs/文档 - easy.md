@@ -10,7 +10,7 @@
 
 系统版本:
 
-    OS:        CentOS 7 1511版
+    OS:        CentOS 7 1511 版
     Python:    2.7.5 (CentOS 7 自带)
     Java:      1.8.0_65 (CentOS 7 自带)
     Zookeeper: 3.4.9
@@ -30,13 +30,13 @@ IP 及 端口 分配:
 
 ### 1.1 单机模式
 
-此模式主要用于**开发人员本地环境下测试代码**
+此模式主要用于 **开发人员本地环境下测试代码**
 
 #### 1.1.1 解压 Zookeeper 并进入其根目录
 
 ```bash
-tar -xzf zookeeper-3.4.9.tar.gz -C /usr/local/opt/
-cd /usr/local/opt/zookeeper-3.4.9
+tar -xzf zookeeper-3.4.9.tar.gz -C /usr/local/
+cd /usr/local/zookeeper-3.4.9
 ```
 
 #### 1.1.2 创建一个文件 conf/zoo.cfg
@@ -57,11 +57,11 @@ clientPort=2181
 ```
 
 * tickTime: 是 zookeeper 的最小时间单元的长度(以毫秒为单位), 它被用来设置心跳检测和会话最小超时时间(tickTime 的两倍)
-* initLimit: 初始化连接最长 tickTime 个数
+* initLimit: 初始化连接时能容忍的最长 tickTime 个数
 * syncLimit: follower 用于同步的最长 tickTime 个数
 * dataDir: 服务器存储 **数据快照** 的目录
 * dataLogDir: 服务器存储 **事务日志** 的目录
-* clientPort: client 连接 server 的端口.
+* clientPort: 用于 client 连接的 server 的端口.
 
 其中需要注意的是`dataDir`和`dataLogDir`, 分别是 zookeeper 运行时的数据目录和日志目录, 要保证 **这两个目录已创建** 且 **运行 zookeeper 的用户拥有这两个目录的所有权**
 
@@ -84,14 +84,14 @@ bin/zkServer.sh start
 关闭 Zookeeper:
 
 ```bash
-./bin/zdServer.sh stop
+./bin/zkServer.sh stop
 ```
 
 ### 1.2 集群模式
 
-此模式是**生产环境中实际使用的模式**
+此模式是 **生产环境中实际使用的模式**
 
-因为 zookeeper 保证 2n + 1 台机器最大允许 n 台机器挂掉, 所以配置集群模式最好是奇数台机器:3, 5, 7...
+因为 zookeeper 保证 2n + 1 台机器最大允许 n 台机器挂掉, 所以配置集群模式最好是奇数台机器: 3, 5, 7...
 
 最少 3 台构成集群
 
@@ -145,9 +145,9 @@ server.3=localhost:2890:3890
 
 然后每个 zookeeper 实例的 dataDir 和 dataLogDir 配置为不同的即可
 
-#### 1.2.3 在标示为 X 的机器上, 将 X 写入 ${dataDir}/myid 文件
+#### 1.2.3 myid 文件
 
-如: 在 192.168.1.2 机器上的 /var/lib/zookeeper/data 目录下建立文件 myid, 写入 2
+在标示为 X 的机器上, 将 X 写入 ${dataDir}/myid 文件, 如: 在 192.168.1.2 机器上的 /var/lib/zookeeper/data 目录下建立文件 myid, 写入 2
 
 ````bash
 echo "2" > /var/lib/zookeeper/data/myid
@@ -176,7 +176,7 @@ firewall-cmd --reload                                          # 重新加载防
 
 #### 1.2.5 测试
 
-在**集群中所有机器上**启动 zookeeper(尽量同时):
+在 **集群中所有机器上** 启动 zookeeper(尽量同时):
 
 ```bash
 bin/zkServer.sh start
@@ -199,7 +199,7 @@ bin/zkServer.sh status
 关闭 zookeeper:
 
 ```bash
-./bin/zdServer.sh stop
+./bin/zkServer.sh stop
 ```
 
 ### 1.3 Zookeeper 常见问题
@@ -219,13 +219,15 @@ cat zookeeper.out
 查看 zookeeper.out 日志可以看到是那些机器连不上, 可能是 **网络, ip, 端口, 配置文件, myid 文件** 的问题.
 正常应该是: 先是一些 java 异常, 这是因为 ZooKeeper 集群启动的时候, 每个结点都试图去连接集群中的其它结点, 先启动的肯定连不上后面还没启动的, 所以上面日志前面部分的异常是可以忽略的, 当集群所有的机器的 zookeeper 都启动起来, 就没有异常了, 并选举出来了 leader.
 
+PS: 因为 zkServer.sh 脚本中是用 nohup 命令启动 zookeeper 的, 所以 zookeeper.out 文件是在调用 zkServer.sh 时的路径下, 如:用 `bin/zkServer.sh start` 启动则 zookeeper.out 文件在 `zookeeper-3.4.9/` 下; 用 `zkServer.sh start` 启动则 zookeeper.out 文件在 `zookeeper-3.4.9/bin/` 下.
+
 ## 2 Storm 搭建
 
 ### 2.1 单机模式
 
-此模式主要用于**开发人员本地环境下测试代码**
+此模式主要用于 **开发人员本地环境下测试代码**
 
-#### 2.1.1 搭建 Zookeeper(单机 or 集群)
+#### 2.1.1 搭建 Zookeeper (单机 or 集群)
 
 见 [1.2.1 单机模式](# 1.2.1 单机模式) or 见 [1.2.2 集群模式](# 1.2.2 集群模式)
 
@@ -269,7 +271,7 @@ PS: Storm 后台进程被启动后, 将在 Storm 安装部署目录下的 logs/ 
 
 ### 2.2 集群模式
 
-此模式是**生产环境中实际使用的模式**
+此模式是 **生产环境中实际使用的模式**
 
 #### 2.2.1 hosts 映射(可选)
 
@@ -303,8 +305,8 @@ echo "192.168.1.9 sup4" >> /etc/hosts
 #### 2.2.4 解压 Storm 并进入其根目录
 
 ```bash
-tar -xzf apache-storm-1.0.2.tar.gz -C /usr/local/opt/
-cd /usr/local/opt/apache-storm-1.0.2
+tar -xzf apache-storm-1.0.2.tar.gz -C /usr/local/
+cd /usr/local/apache-storm-1.0.2
 ```
 
 #### 2.2.5 修改 conf/storm.yaml 配置文件
@@ -338,7 +340,26 @@ supervisor.slots.ports:
     - 6703
 ```
 
-#### 2.2.6 启动 Storm 各个后台进程
+#### 2.2.6 开放端口
+
+把 Storm 用到的端口开放出来
+
+```bash
+firewall-cmd --zone=public --add-port=3772/tcp --permanent     # drpc.port
+firewall-cmd --zone=public --add-port=3773/tcp --permanent     # drpc.invocations.port
+firewall-cmd --zone=public --add-port=3774/tcp --permanent     # drpc.http.port
+firewall-cmd --zone=public --add-port=6627/tcp --permanent     # nimbus.thrift.port
+firewall-cmd --zone=public --add-port=6699/tcp --permanent     # pacemaker.port
+firewall-cmd --zone=public --add-port=8000/tcp --permanent     # logviewer.port
+firewall-cmd --zone=public --add-port=8080/tcp --permanent     # storm.ui.port
+firewall-cmd --zone=public --add-port=6700/tcp --permanent     # supervisor.slots.ports -- 取决于上面的配置
+firewall-cmd --zone=public --add-port=6701/tcp --permanent     # 
+firewall-cmd --zone=public --add-port=6702/tcp --permanent     # 
+firewall-cmd --zone=public --add-port=6703/tcp --permanent     # 
+firewall-cmd --reload                                          # 重新加载防火墙规则
+```
+
+#### 2.2.7 启动 Storm 各个后台进程
 
 和 Zookeeper 一样, Storm 也是快速失败(fail-fast)的系统, 这样 Storm 才能在任意时刻被停止, 并且当进程重启后被正确地恢复执行. 这也是为什么 Storm 不在进程内保存状态的原因, 即使 Nimbus 或 Supervisors 被重启, 运行中的 Topologies 不会受到影响. 以下是启动 Storm 各个后台进程的方式:
 
@@ -384,11 +405,11 @@ Logviewer 是 Storm UI 中用来查看 Nimbus/Supervisor 的 log 的工具.
 
 至此, Storm 集群已经部署、配置完毕, 可以向集群提交拓扑运行了.
 
-#### 2.2.7 查看 Storm 状态
+#### 2.2.8 查看 Storm 状态
 
 利用 Storm UI, 通过 http://{nimbus host}:8080 查看集群的各种状态.
 
-#### 2.2.8 监控 Supervisor 的运行情况(可选)
+#### 2.2.9 监控 Supervisor 的运行情况(可选)
 
 Storm 提供了一种机制, 使 Supervisor 定期运行管理人员提供的脚本, 以确定节点是否正常.
 
@@ -412,7 +433,7 @@ storm.health.check.timeout.ms: 5000
 
 PS: **脚本必须具有执行权限.**
 
-#### 2.2.9 配置外部库与环境变量(可选)
+#### 2.2.10 配置外部库与环境变量(可选)
 
 如果你需要使用某些外部库或者定制插件的功能, 你可以将相关 jar 包放入 extlib 与 extlib-daemon 目录下. 注意, extlib-daemon 目录仅用于存储后台进程(Nimbus, Supervisor, DRPC, UI, Logviewer)所需的 jar 包, 例如 HDFS 以及定制的调度库.
 
@@ -543,7 +564,7 @@ echo "192.168.1.11 kfk2" >> /etc/hosts
 echo "192.168.1.12 kfk3" >> /etc/hosts
 ```
 
-#### 3.2 搭建 Zookeeper(单机 or 集群)
+#### 3.2 搭建 Zookeeper (单机 or 集群)
 
 Broker, Producer, Consumer 的运行都需要 ZooKeeper
 
@@ -552,8 +573,8 @@ Broker, Producer, Consumer 的运行都需要 ZooKeeper
 #### 3.3 Broker 的配置
 
 ```bash
-tar -xzf kafka_2.11-0.9.0.1.tgz -C /usr/local/opt
-cd /usr/local/opt/kafka_2.11-0.9.0.1
+tar -xzf kafka_2.11-0.9.0.1.tgz -C /usr/local/
+cd /usr/local/kafka_2.11-0.9.0.1
 ```
 
 config 文件夹下是各个组件的配置文件, server.properties 是 Broker 的配置文件, 需要修改和注意的有
@@ -581,7 +602,16 @@ broker.id=2
 host.name=kfk3
 ```
 
-#### 3.4 Broker 运行与终止
+#### 3.4 开放端口
+
+把 Kafka 用到的端口开放出来
+
+```bash
+firewall-cmd --zone=public --add-port=9092/tcp --permanent     # 永久开启 9092 端口
+firewall-cmd --reload                                          # 重新加载防火墙规则
+```
+
+#### 3.5 Broker 运行与终止
 
 Broker 运行命令如下, 将 Broker 放到后台执行, 且不受终端关闭的影响, 标准输出和错误输出定向到 `./logs/kafka-server-boot.log`, 有问题时可以去看这个文件
 
@@ -595,7 +625,7 @@ nohup bin/kafka-server-start.sh config/server.properties > logs/kafka-server-boo
 bin/kafka-server-stop.sh config/server.properties
 ```
 
-#### 3.5 测试
+#### 3.6 测试
 
 我们使用 Kafka 自带的基于 Console 的 Producer 和 Consumer 脚本做测试.
 
@@ -605,7 +635,7 @@ bin/kafka-server-stop.sh config/server.properties
 > bin/kafka-server-start.sh config/server.properties > logs/kafka-server-boot.log 2>&1 &
 ```
 
-##### 3.5.1 创建 Topic
+##### 3.6.1 创建 Topic
 
 现在我们开始创建一个名为"TestCase"的单分区单副本的 Topic.
 
@@ -622,7 +652,7 @@ test
 
 另外, 除去手工创建 Topic 以外, 你也可以将你的 Brokers 配置成当消息发布到一个不存在的 Topic 自动创建此 Topics.
 
-##### 3.5.2 启动 生产者
+##### 3.6.2 启动 生产者
 
 Kafka 附带一个 **终端生产者** 可以从文件或者标准输入中读取输入然后发送这个消息到 Kafka 集群. 默认情况下每行信息被当做一个消息发送.
 
@@ -636,7 +666,7 @@ This is another message
 
 PS: 通过键入 **Ctrl-C** 来终止终端生产者.
 
-##### 3.5.3 启动 消费者
+##### 3.6.3 启动 消费者
 
 Kafka 也附带了一个 **终端生产者** 可以导出这些消息到标准输出.
 
@@ -652,7 +682,7 @@ This is another message
 
 PS: 通过键入 **Ctrl-C** 来终止终端消费者.
 
-##### 3.5.4 配置一个多节点集群
+##### 3.6.4 配置一个多节点集群
 
 我们已经成功的以单 Broker 的模式运行起来了, 但这并没有意思. 对于 Kafka 来说, 一个单独的 Broker 就是一个大小为 1 的集群, 所以集群模式就是多启动几个 Broker 实例.
 
@@ -742,3 +772,7 @@ Topic:my-replicated-topic    PartitionCount:1    ReplicationFactor:3    Configs:
 my test message 1
 my test message 2
 ```
+
+## 4 最后
+
+* 因为上面这三个框架都是 Java 的, 所以可以调整 Java 堆大小以优化上面这些程序的运行. Java 堆太小会导致程序难以运行; Java 堆太大(超出物理内存)会导致程序被交换到磁盘, 性能急剧降低. 例如: 4 G 内存的专用服务器可以分配 3 G 的 Java 堆, 最好的建议是运行负载测试, 然后确保远低于会导致系统交换的堆大小.
