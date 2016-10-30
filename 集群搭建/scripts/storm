@@ -1,0 +1,95 @@
+#!/bin/bash
+
+CONFIG=".config"
+NUM="$CONFIG/NUM"
+IP="$CONFIG/IP"
+USERNAME="$CONFIG/USERNUM"
+num=`cat $NUM`
+dir=`pwd`
+i=1
+while read line 
+do
+	ip[$i]=${line}
+	if [ $i != 1 ]
+	then 
+		zookeeper_c="$ip,${line}:2181"
+	else
+		zookeeper_c="${line}"
+	fi
+	i=$[i+1]
+done < $IP
+
+FOLDER="storm"
+cd $FOLDER
+found_storm=`ls | grep "tar.gz$"`
+if [[ $found_storm == "" ]]
+then
+	echo 
+	echo "没有找到storm安装包，请确保在目录storm下放置了安装包"
+else 
+	echo "发现安装包$found_storm"
+	tar -zvxf $found_storm
+	for file in *
+	do 
+		if test -d $file
+        then
+            z_path="$file"
+		fi
+	done
+	echo "请输入storm安装路径,默认安装到：/home/$USER/storm/$z_path"
+	echo -n "安装到默认路径?(yes/no):"
+	read anw
+	if [[ $anw == "no" ]]
+	then 
+		echo -n "请输入安装路径:"
+		read path
+	else
+		path="/home/$USER/storm/"
+    fi
+	#以后需要测试用户输入的path是否存在  
+    echo $path >> "$dir/$CONFIG/INSTALLED"
+    mkdir $path
+	mv $z_path $path
+	
+	echo "开始配置"
+	cd $path$z_path
+	echo "安装集群模式中"
+	echo "请输入storm状态信息存放路径,默认设置为：/home/$USER/storm/storm-data"
+	echo -n "安装到默认路径?(yes/no):"
+	read l_anw
+	if [[ $l_anw == "no" ]]
+	then
+		echo -n "请输入storm 状态信息存放路径："
+		read l_path
+	else 
+		l_path=/home/$USER/storm/storm-data
+	fi
+	echo "其他属性暂时设为默认值"
+	mkdir $l_path
+	echo "create by auto" > conf/storm.yaml
+	echo "storm.zookeeper.servers:">>conf/storm.yaml
+	i=1
+	while read line 
+	do
+		echo "	- \"${line}\"">>conf/storm.yaml
+	done < $dir/$IP
+	
+	echo "storm.local.dir: \"$l_path\"" >>conf/storm.yaml
+	echo "nimbus.seeds: \"${ip[1]}\""   >>conf/storm.yaml
+	
+	echo "supervisor.slots.ports:" >>conf/storm.yaml
+	echo "		- 6700"			>>conf/storm.yaml
+    echo " 		- 6701"			>>conf/storm.yaml
+	echo " 		- 6702" 		>>conf/storm.yaml
+	echo " 		- 6703" 		>>conf/storm.yaml
+	
+    echo "本机配置完成，分发到集群中其他机器"
+	j=2
+    cat $dir/$USERNAME | while read line
+    do
+        scp -r $path "${line}@""${ip[$j]}"":$path"
+		
+        j=$[j+1]
+    done
+
+fi

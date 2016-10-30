@@ -1,0 +1,34 @@
+#!/bin/bash
+
+CONFIG=".config"
+NUM="$CONFIG/NUM"
+IP="$CONFIG/IP"
+USERNAME="$CONFIG/USERNUM"
+chmod -R 777 scripts/
+if [ ! -d $CONFIG ]
+then
+	echo "*****************************************"
+	echo "*    程序没有发现必须的配置文件 ！      *"
+	echo "* 程序现在开始引导建立必须的配置文件    *"
+	echo "*****************************************"
+	echo
+    mkdir $CONFIG
+	echo -n "请输入集群中机器的数量："
+	read num
+	echo $num >$NUM
+	for i in `seq $num`
+	do
+		echo "请输入第$i台机器的ip"
+		read info
+		echo $info >> $IP
+	done
+	echo "程序需要远程向其他"$[num-1]"台机器分发资源，所以需要知道其他机器的用户名，密码需要在分发时手动输入"
+	i=2
+	while(($i<=$num))
+	do
+		echo "请输入第$i台机器的用户名"
+		read username
+		echo $username >> $USERNAME
+        i=$[i+1]
+	done
+fi
