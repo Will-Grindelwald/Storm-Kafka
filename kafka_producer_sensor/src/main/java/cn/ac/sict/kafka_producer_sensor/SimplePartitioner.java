@@ -1,4 +1,4 @@
-package cn.ac.sict.kafka_producer_demo2;
+package cn.ac.sict.kafka_producer_sensor;
 
 import java.util.Map;
 
@@ -20,13 +20,7 @@ public class SimplePartitioner implements Partitioner {
 	@Override
 	public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
 		int a_numPartitions = cluster.availablePartitionsForTopic(topic).size();
-		int partition = 0;
-		String stringKey = (String) key;
-		int offset = stringKey.lastIndexOf('.');
-		if (offset > 0) {
-			partition = Integer.parseInt(stringKey.substring(offset + 1)) % a_numPartitions;
-		}
-		return partition;
+		return Integer.parseInt((String) key) % a_numPartitions;
 	}
 
 }
