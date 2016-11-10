@@ -1,3 +1,12 @@
+[host_mapping]
+NUM=3
+IP1=192.168.125.171
+HOST1=master-cent7-1
+IP2=192.168.125.172
+HOST2=master-cent7-2
+IP3=192.168.125.173
+HOST3=master-cent7-3
+
 [zookeeper]
 SERVER_NUM=3
 IP1=192.168.125.171
@@ -6,12 +15,12 @@ IP3=192.168.125.173
 
 [storm]
 NIMBUS_NUM=3
-IP1=192.168.125.171
-IP2=192.168.125.172
-IP3=192.168.125.173
+HOST1=master-cent7-1
+HOST2=master-cent7-2
+HOST3=master-cent7-3
 
 [kafka]
 BROKER_NUM=3
-IP1=192.168.125.171
-IP2=192.168.125.172
-IP3=192.168.125.173
+HOST1=master-cent7-1
+HOST2=master-cent7-2
+HOST3=master-cent7-3

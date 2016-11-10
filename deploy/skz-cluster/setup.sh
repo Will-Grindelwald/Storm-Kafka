@@ -56,7 +56,7 @@ function configStorm()
   server_num=$(GetKey zookeeper.SERVER_NUM)
   for((i=1;i<=server_num;i++)); do echo "    - \"$(GetKey "zookeeper.IP$i")\"" >> $STORM_HOME/conf/storm.yaml; done
   nimbus_num=$(GetKey storm.NIMBUS_NUM)
-  for((i=1;i<=nimbus_num;i++)); do nimbus_seeds+="\"$(GetKey "storm.IP$i")\","; done ####
+  for((i=1;i<=nimbus_num;i++)); do nimbus_seeds+="\"$(GetKey "storm.HOST$i")\","; done ####
   nimbus_seeds=${nimbus_seeds%,*}
   echo "nimbus.seeds: [$nimbus_seeds]" >> $STORM_HOME/conf/storm.yaml
   echo "storm.local.dir: \"${__INSTALL_PATH__}/storm-workdir\"" >> $STORM_HOME/conf/storm.yaml
@@ -84,16 +84,19 @@ function configKafka()
   ZK_HOSTS_K=${ZK_HOSTS_K%,*}
   echo "zookeeper.connect=$ZK_HOSTS_K" >> $KAFKA_HOME/config/server.properties
   broker_num=$(GetKey kafka.BROKER_NUM)
-  for((i=1;i<=broker_num;i++)); do BROKER_LIST+="$(GetKey "kafka.IP$i"):9092,"; done
+  for((i=1;i<=broker_num;i++)); do BROKER_LIST+="$(GetKey "kafka.HOST$i"):9092,"; done
   BROKER_LIST=${BROKER_LIST%,*}
   echo "export KAFKA_HOME=$KAFKA_HOME" >> ~/.bashrc
   echo "export BROKER_LIST=$BROKER_LIST" >> ~/.bashrc
 }
 
-# hosts 映射
-#echo "192.168.125.236 DEV236" >> /etc/hosts
-#echo "192.168.125.237 DEV237" >> /etc/hosts
-#echo "192.168.125.238 DEV238" >> /etc/hosts
+function hostMapping()
+{
+  for((i=1;i<=$1;i++))
+  do
+    sudo echo "$(GetKey "host_mapping.IP$i") $(GetKey "host_mapping.HOST$i")" >> /etc/hosts
+  done
+}
 
 if [ $1 -gt 0 ]; then configZoo $1; fi
 if [ $2 -gt 0 ]; then configStorm $2; fi
@@ -126,3 +129,5 @@ sudo firewall-cmd --zone=public --add-port=9092/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=9000/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=9999/tcp --permanent
 sudo firewall-cmd --reload
+
+if [ $(GetKey host_mapping.NUM) -gt 0 ]; then hostMapping $(GetKey host_mapping.NUM); fi
