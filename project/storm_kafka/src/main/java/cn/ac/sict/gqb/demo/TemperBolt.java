@@ -33,12 +33,12 @@ public class TemperBolt implements IRichBolt {
 		if (temper[0].equals("temper")) {
 			for (int i = 1; i < temper.length; ++i) {
 				int t = Integer.parseInt(temper[i]);
-				if (t > 50 || t < -10) {
-					_collector.emit(new Values("站点:" + site + i + "号传感器检测到" + "温度出现异常！" + "温度：" + t));
+				if (t > 60 || t < -20) {
+					_collector.emit(new Values("站点:" + site+" " + i + "号传感器检测到" + "温度出现异常！" + "温度：" + t));
 				}
 			}
 		}
-
+		_collector.ack(input);
 	}
 
 	@Override

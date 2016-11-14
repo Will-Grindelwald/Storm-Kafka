@@ -27,16 +27,19 @@ public class DataProducer {
 		int tdata = 0;
 		double hdata = 0.0;
 		while (true) {
-			int choise = 0 + random.nextInt(1000);
+			int choise = 0 + random.nextInt(10000);
 			switch (choise) {
 			case 0:
 				tdata = createRandom(-30, -20);
+				hdata = createRandom(0.0, 4.9);
 				break;
-			case 999:
+			case 9999:
 				tdata = createRandom(60, 70);
+				hdata = createRandom(96.0, 100.0);
 				break;
 			default:
 				tdata = createRandom(-19, 59);
+				hdata = createRandom(5.0, 95.9);
 				break;
 			}
 			producer.send(new ProducerRecord<String, String>(args[0], "temper:" + tdata + "," + "humi:" + hdata));
@@ -53,8 +56,14 @@ public class DataProducer {
 	}
 
 	private static int createRandom(int min, int max) {
-
 		return min + random.nextInt(max - min);
+	}
+
+	private static double createRandom(double min, double max) {
+		if (min == 0) {
+			return max - random.nextDouble();
+		}
+		return max - random.nextDouble() * min;
 
 	}
 

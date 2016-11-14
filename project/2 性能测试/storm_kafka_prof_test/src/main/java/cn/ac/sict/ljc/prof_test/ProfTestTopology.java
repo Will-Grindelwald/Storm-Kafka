@@ -1,4 +1,4 @@
-package cn.ac.sict.ljc.demo;
+package cn.ac.sict.ljc.prof_test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,25 +26,23 @@ import org.apache.storm.tuple.Fields;
 /**
  * 
  */
-public class WordCountTopology {
+public class ProfTestTopology {
 
-	public static Logger log = LoggerFactory.getLogger(WordCountTopology.class);
+	public static Logger log = LoggerFactory.getLogger(ProfTestTopology.class);
 
 	private final TopologyBuilder builder;
 
-	public WordCountTopology(Properties configProps) {
+	public ProfTestTopology(Properties configProps) {
 
 		String zkStr = configProps.getProperty("zkStr");
 		String zkRoot = configProps.getProperty("zkRoot");
 		String kafkaStr = configProps.getProperty("kafkaStr");
-		String inputTopic_ljc_demo = configProps.getProperty("inputTopic_ljc_demo");
-		String outputTopic_ljc_demo = configProps.getProperty("outputTopic_ljc_demo");
-		String spoutId_ljc_demo = configProps.getProperty("spoutId_ljc_demo");
+		String inputTopic_ljc_demo = configProps.getProperty("inputTopic_ljc_prof_test");
+		String outputTopic_ljc_demo = configProps.getProperty("outputTopic_ljc_prof_test");
+		String spoutId_ljc_demo = configProps.getProperty("spoutId_ljc_prof_test");
 
 		log.info("inputTopic_ljc_demo = " + inputTopic_ljc_demo + ", outputTopic_ljc_demo = " + outputTopic_ljc_demo + ", spoutId = " + spoutId_ljc_demo);
 
-		// BrokerHosts 接口有 2 个实现类 StaticHosts 和 ZkHosts, ZkHosts 会定时(默认 60 秒)从 ZK 中更新 brokers 的信息(可以通过修改 host.refreshFreqSecs 来设置), StaticHosts 则不会
-		// 第二个参数 brokerZkPath 为 zookeeper 中存储 topic 的路径, kafka 的默认配置为 /brokers
 		BrokerHosts brokerHosts = new ZkHosts(zkStr, zkRoot);
 
 		// 定义spoutConfig
@@ -54,41 +52,32 @@ public class WordCountTopology {
 				spoutId_ljc_demo                               // 第四个参数 id 是当前 spout 的唯一标识
 		);
 
-		// 定义 kafkaSpout 如何解析数据, 这里是将 kafka producer 的 send 的数据放入到 String 类型的 str 中输出, str 是 StringSchema 定义的 field, 可以根据业务实现自己的 scheme
-		// spoutConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
-		spoutConfig.scheme = new SchemeAsMultiScheme(new MessageScheme()); // 自己实现的 Scheme, 输出 field 为 msg
+		spoutConfig.scheme = new SchemeAsMultiScheme(new MessageScheme());
 
 		builder = new TopologyBuilder();
 
 		// 设置 spout
 		String Spout = KafkaSpout.class.getSimpleName();
-		builder.setSpout(Spout, new KafkaSpout(spoutConfig), 1); // topic 的分区数(partitions)最好是 KafkaSpout 的并发度的倍数
+		builder.setSpout(Spout, new KafkaSpout(spoutConfig), 4); // topic 的分区数(partitions)最好是 KafkaSpout 的并发度的倍数
 
-		// 设置 一级 bolt
-		String Bolt1 = WordSplitBolt.class.getSimpleName();
-		builder.setBolt(Bolt1, new WordSplitBolt(), 8) // 并行度 8
+		String Bolt1 = CountBolt.class.getSimpleName();
+		builder.setBolt(Bolt1, new CountBolt(), 4) // 并行度 8
 				.shuffleGrouping(Spout); // 上一级是 kafkaSpout, 随机分组
-
-		// 设置 二级 bolt
-		String Bolt2 = WordCountBolt.class.getSimpleName();
-		builder.setBolt(Bolt2, new WordCountBolt(), 12) // 并行度 12
-				.fieldsGrouping(Bolt1, new Fields("word")); // 上一级是 WordSplitBolt, 按字段分组
 
 		Properties producerProps = new Properties();
 		producerProps.put("bootstrap.servers", kafkaStr);
-		producerProps.put("acks", "all");
+		producerProps.put("acks", "1");
 		producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
 		KafkaBolt<String, String> kafkaBolt = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)
 				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_demo))
-				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", "result")); // 没有 key, 只传 value
+				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", "res")); // 没有 key, 只传 value
 
-		// 设置 三级 bolt: KafakBolt
-		String Bolt3 = KafkaBolt.class.getSimpleName();
-		builder.setBolt(Bolt3, kafkaBolt, 8)
-				.fieldsGrouping(Bolt2, new Fields("result"));
+		String Bolt2 = KafkaBolt.class.getSimpleName();
+		builder.setBolt(Bolt2, kafkaBolt, 1)
+				.fieldsGrouping(Bolt1, new Fields("res"));
 	}
 
 	public void submit(String topologyName) throws AlreadyAliveException, InvalidTopologyException, AuthorizationException {
@@ -98,7 +87,7 @@ public class WordCountTopology {
 			LocalCluster cluster = new LocalCluster();
 			cluster.submitTopology(topologyName, config, builder.createTopology());
 			try {
-				Thread.sleep(1200000); // 20分钟后自动停止 Topology
+				Thread.sleep(60000); // 20分钟后自动停止 Topology
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} finally {

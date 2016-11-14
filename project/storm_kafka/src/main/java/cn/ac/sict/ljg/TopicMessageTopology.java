@@ -57,7 +57,7 @@ public class TopicMessageTopology {
     		
 	topologyBuilder.setBolt("dataDestinationBolt",kafkaBolt,4).shuffleGrouping("dataDealBolt" );
 	try {
-		StormSubmitter.submitTopologyWithProgressBar("kafka-Storm-Topo", config, topologyBuilder .createTopology());
+		StormSubmitter.submitTopology("kafka-Storm-Topo", config, topologyBuilder .createTopology());
 	} catch (AlreadyAliveException | InvalidTopologyException | AuthorizationException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
