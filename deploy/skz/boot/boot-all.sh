@@ -8,5 +8,6 @@ fi
 cur=$(cd `dirname $0`; pwd)
 
 $cur/zserver.sh start
-$cur/storm-start.sh
-$cur/kafka-start.sh
+$cur/start-storm.sh
+$cur/start-kafka.sh
+$cur/start-manager.sh

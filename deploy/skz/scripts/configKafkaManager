@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# usage
+if [ $# -ne 4 ]
+then
+  echo "usage: ./configKafkaManager mode kafka_manager_bool cur_path install_path"
+  exit 1
+fi
+
+# init
+__CUR_PATH__=$3
+__INSTALL_PATH__=$4
+
+function GetKey(){
+  section=$(echo $1 | cut -d '.' -f 1)
+  key=$(echo $1 | cut -d '.' -f 2)
+  sed -n "/\[$section\]/,/\[.*\]/{
+    /^\[.*\]/d
+    /^[ \t]*$/d
+    /^$/d
+    /^#.*$/d
+    s/^[ \t]*$key[ \t]*=[ \t]*\(.*\)[ \t]*/\1/p
+  }" ${__CUR_PATH__}/config
+}
+
+if [ $2 -eq 0 ]; then exit 1; fi
+
+# start configure
+echo "配置 kafka manager"
+unzip -q ${__CUR_PATH__}/kafka_manager/kafka-manager-*.zip -d ${__INSTALL_PATH__}
+KAFKA_MANAGER_HOME=$(cd ${__INSTALL_PATH__}/kafka-manager-*; pwd)
+if [ $1 -eq 0 ]
+then
+  ZK_HOSTS_M=localhost:2181
+else
+  server_num=$(GetKey zookeeper.SERVER_NUM)
+  for((i=1;i<=server_num;i++)); do ZK_HOSTS_M+="$(GetKey "zookeeper.IP$i"):2181,"; done
+  ZK_HOSTS_M=${ZK_HOSTS_M%,*}
+fi
+sed -i "/^kafka-manager.zkhosts=\"kafka-manager-zookeeper:2181\"/s/kafka-manager-zookeeper:2181/${ZK_HOSTS_M%,*}/g" $KAFKA_MANAGER_HOME/conf/application.conf
+echo "export KAFKA_MANAGER_HOME=$KAFKA_MANAGER_HOME" >> ~/.bashrc
