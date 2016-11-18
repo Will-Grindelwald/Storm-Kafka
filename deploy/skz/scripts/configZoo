@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # usage
-if [ $# -ne 4 ]
-then
+if [ $# != 4 ]; then
   echo "usage: ./configZoo mode zoo_num cur_path install_path"
   exit 1
 fi
@@ -25,19 +24,21 @@ function GetKey(){
 
 # start configure
 echo "配置 zookeeper"
+if [ -z $(cd ${__CUR_PATH__}/zookeeper; ls | grep "zookeeper-.*.tar.gz") ]; then
+  echo "没有找到 zookeeper 安装包，请确保在目录 zookeeper 下放置了安装包"
+  exit 1
+fi
 tar -xzf ${__CUR_PATH__}/zookeeper/zookeeper-*.tar.gz -C ${__INSTALL_PATH__}
 ZK_HOME=$(cd ${__INSTALL_PATH__}/zookeeper-*; pwd)
 mkdir -p ${__INSTALL_PATH__}/zookeeper/data ${__INSTALL_PATH__}/zookeeper/logs
-cp -f ${__CUR_PATH__}/conf$1/zoo.cfg $ZK_HOME/conf
+cp -f ${__CUR_PATH__}/conf/zoo.cfg $ZK_HOME/conf
 echo "dataDir=${__INSTALL_PATH__}/zookeeper/data" >> $ZK_HOME/conf/zoo.cfg
 echo "dataLogDir=${__INSTALL_PATH__}/zookeeper/logs" >> $ZK_HOME/conf/zoo.cfg
-if [ $1 -eq 0 ]
-then
+if [ $1 = 0 ]; then
   ZK_HOSTS=localhost:2181
 else
   server_num=$(GetKey zookeeper.SERVER_NUM)
-  for((i=1;i<=server_num;i++))
-  do
+  for((i=1;i<=server_num;i++)); do
     IP=$(GetKey "zookeeper.IP$i")
     echo "server.$i=$IP:2888:3888" >> $ZK_HOME/conf/zoo.cfg
     ZK_HOSTS+="$IP:2181,"

@@ -6,4 +6,4 @@ then
 fi
 
 cd $KAFKA_MANAGER_HOME
-nohup bin/kafka-manager -Dconfig.file=conf/application.conf -Dhttp.port=9001 > kafka-manager-boot.log 2>&1 &
+nohup bin/kafka-manager -Dconfig.file=conf/application.conf -Dhttp.port=9000 > kafka-manager-boot.log 2>&1 &

@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # usage
-if [ $# -ne 4 ]
-then
+if [ $# != 4 ]; then
   echo "usage: ./configStorm mode storm_num cur_path install_path"
   exit 1
 fi
@@ -25,13 +24,15 @@ function GetKey(){
 
 # start configure
 echo "配置 storm"
+if [ -z $(cd ${__CUR_PATH__}/storm; ls | grep "apache-storm-.*.tar.gz") ]; then
+  echo "没有找到 storm 安装包，请确保在目录 storm 下放置了安装包"
+  exit 1
+fi
 tar -xzf ${__CUR_PATH__}/storm/apache-storm-*.tar.gz -C ${__INSTALL_PATH__}
 STORM_HOME=$(cd ${__INSTALL_PATH__}/apache-storm-*; pwd)
 mkdir -p ${__INSTALL_PATH__}/storm-workdir $STORM_HOME/logs
-if [ $1 -eq 0 ]
-then
-  cp -f ${__CUR_PATH__}/conf$1/storm.yaml $STORM_HOME/conf/storm.yaml
-  echo "storm.local.dir: \"${__INSTALL_PATH__}/storm-workdir\"" >> $STORM_HOME/conf/storm.yaml
+if [ $1 = 0 ]; then
+  cp -f ${__CUR_PATH__}/conf/storm.yaml $STORM_HOME/conf/storm.yaml
 else
   echo "storm.zookeeper.servers:" >> $STORM_HOME/conf/storm.yaml
   server_num=$(GetKey zookeeper.SERVER_NUM)
@@ -40,11 +41,11 @@ else
   for((i=1;i<=nimbus_num;i++)); do nimbus_seeds+="\"$(GetKey "storm.HOST$i")\","; done
   nimbus_seeds=${nimbus_seeds%,*}
   echo "nimbus.seeds: [$nimbus_seeds]" >> $STORM_HOME/conf/storm.yaml
-  echo "storm.local.dir: \"${__INSTALL_PATH__}/storm-workdir\"" >> $STORM_HOME/conf/storm.yaml
   echo "supervisor.slots.ports:" >> $STORM_HOME/conf/storm.yaml
   echo "    - 6700" >> $STORM_HOME/conf/storm.yaml
   echo "    - 6701" >> $STORM_HOME/conf/storm.yaml
   echo "    - 6702" >> $STORM_HOME/conf/storm.yaml
   echo "    - 6703" >> $STORM_HOME/conf/storm.yaml
 fi
+echo "storm.local.dir: \"${__INSTALL_PATH__}/storm-workdir\"" >> $STORM_HOME/conf/storm.yaml
 echo "export STORM_HOME=$STORM_HOME" >> ~/.bashrc

@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # usage
-if [ $# -ne 4 ]
-then
+if [ $# != 4 ]; then
   echo "usage: ./configKafka mode kafka_num cur_path install_path"
   exit 1
 fi
@@ -25,25 +24,27 @@ function GetKey(){
 
 # start configure
 echo "配置 kafka"
+if [ -z $(cd ${__CUR_PATH__}/kafka; ls | grep "kafka_.*.tgz") ]; then
+  echo "没有找到 kafka 安装包，请确保在目录 kafka 下放置了安装包"
+  exit 1
+fi
 tar -xzf ${__CUR_PATH__}/kafka/kafka_*.tgz -C ${__INSTALL_PATH__}
 KAFKA_HOME=$(cd ${__INSTALL_PATH__}/kafka_*; pwd)
-mkdir ${__INSTALL_PATH__}/kafka-logs $KAFKA_HOME/logs
-cp -f ${__CUR_PATH__}/conf$1/server.properties $KAFKA_HOME/config/server.properties
-if [ $1 -eq 0 ]
-then
-  echo "log.dirs=${__INSTALL_PATH__}/kafka-logs" >> $KAFKA_HOME/config/server.properties
+mkdir -p ${__INSTALL_PATH__}/kafka-logs $KAFKA_HOME/logs
+cp -f ${__CUR_PATH__}/conf/server.properties $KAFKA_HOME/config/server.properties
+if [ $1 = 0 ]; then
   BROKER_LIST=localhost:9092
 else
-  echo "broker.id=$2" >> $KAFKA_HOME/config/server.properties
-  echo "host.name=$(GetKey "kafka.HOST$2")" >> $KAFKA_HOME/config/server.properties
-  echo "log.dirs=${__INSTALL_PATH__}/kafka-logs" >> $KAFKA_HOME/config/server.properties
+  sed -i "/^broker.id=0/s/0/$2/g" $KAFKA_HOME/config/server.properties
+  sed -i "/^host.name=localhost/s/localhost/$(GetKey "kafka.HOST$2")/g" $KAFKA_HOME/config/server.properties
   server_num=$(GetKey zookeeper.SERVER_NUM)
   for((i=1;i<=server_num;i++)); do ZK_HOSTS_K+="$(GetKey "zookeeper.IP$i"):2181,"; done
   ZK_HOSTS_K=${ZK_HOSTS_K%,*}
-  echo "zookeeper.connect=$ZK_HOSTS_K" >> $KAFKA_HOME/config/server.properties
+  sed -i "/^zookeeper.connect=localhost:2181/s/localhost:2181/$ZK_HOSTS_K/g" $KAFKA_HOME/config/server.properties
   broker_num=$(GetKey kafka.BROKER_NUM)
   for((i=1;i<=broker_num;i++)); do BROKER_LIST+="$(GetKey "kafka.HOST$i"):9092,"; done
   BROKER_LIST=${BROKER_LIST%,*}
 fi
+sed -i "/^#log.dirs=\/tmp\/kafka-logs/a log.dirs=${__INSTALL_PATH__}/kafka-logs" $KAFKA_HOME/config/server.properties
 echo "export KAFKA_HOME=$KAFKA_HOME" >> ~/.bashrc
 echo "export BROKER_LIST=$BROKER_LIST" >> ~/.bashrc

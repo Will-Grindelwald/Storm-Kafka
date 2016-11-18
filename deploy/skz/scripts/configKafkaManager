@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # usage
-if [ $# -ne 4 ]
-then
+if [ $# != 4 ]; then
   echo "usage: ./configKafkaManager mode kafka_manager_bool cur_path install_path"
   exit 1
 fi
@@ -23,14 +22,17 @@ function GetKey(){
   }" ${__CUR_PATH__}/config
 }
 
-if [ $2 -eq 0 ]; then exit 1; fi
+if [ $2 = 0 ]; then exit 1; fi
 
 # start configure
 echo "配置 kafka manager"
-unzip -q ${__CUR_PATH__}/kafka_manager/kafka-manager-*.zip -d ${__INSTALL_PATH__}
+if [ -z $(cd ${__CUR_PATH__}/kafka_manager; ls | grep "kafka-manager-.*.zip") ]; then
+  echo "没有找到 kafka_manager 安装包，请确保在目录 kafka_manager 下放置了安装包"
+  exit 1
+fi
+unzip -uq ${__CUR_PATH__}/kafka_manager/kafka-manager-*.zip -d ${__INSTALL_PATH__}
 KAFKA_MANAGER_HOME=$(cd ${__INSTALL_PATH__}/kafka-manager-*; pwd)
-if [ $1 -eq 0 ]
-then
+if [ $1 = 0 ]; then
   ZK_HOSTS_M=localhost:2181
 else
   server_num=$(GetKey zookeeper.SERVER_NUM)
@@ -38,4 +40,5 @@ else
   ZK_HOSTS_M=${ZK_HOSTS_M%,*}
 fi
 sed -i "/^kafka-manager.zkhosts=\"kafka-manager-zookeeper:2181\"/s/kafka-manager-zookeeper:2181/${ZK_HOSTS_M%,*}/g" $KAFKA_MANAGER_HOME/conf/application.conf
+echo '$cur/start-manager.sh' >> ${__CUR_PATH__}/boot/boot-all.sh
 echo "export KAFKA_MANAGER_HOME=$KAFKA_MANAGER_HOME" >> ~/.bashrc
