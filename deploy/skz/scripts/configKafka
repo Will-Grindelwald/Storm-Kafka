@@ -42,6 +42,7 @@ else
   ZK_HOSTS_K=${ZK_HOSTS_K%,*}
   sed -i "/^zookeeper.connect=localhost:2181/s/localhost:2181/$ZK_HOSTS_K/g" $KAFKA_HOME/config/server.properties
   broker_num=$(GetKey kafka.BROKER_NUM)
+  BROKER_LIST=
   for((i=1;i<=broker_num;i++)); do BROKER_LIST+="$(GetKey "kafka.HOST$i"):9092,"; done
   BROKER_LIST=${BROKER_LIST%,*}
 fi
