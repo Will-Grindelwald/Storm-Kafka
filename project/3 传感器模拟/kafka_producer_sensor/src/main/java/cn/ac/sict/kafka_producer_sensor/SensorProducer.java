@@ -45,7 +45,8 @@ public class SensorProducer extends Thread {
 			//long startTime = System.nanoTime(); // 获取开始时间
 			//while ((i--) != 0) {
 			while (true) {
-				no = rnd.nextInt(2); // 0 温度, 1 压力
+				//no = rnd.nextInt(2); // 0 温度, 1 压力
+				no = 0;
 				topic = Topic[no];
 				key = (NO) + ""; // 组号, 用于分区
 				
@@ -62,7 +63,7 @@ public class SensorProducer extends Thread {
 
 				// sleep 为便于观察
 				try {
-					Thread.sleep(400);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 				}
 			}
