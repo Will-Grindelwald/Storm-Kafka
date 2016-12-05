@@ -35,43 +35,30 @@ public class SensorProducer extends Thread {
 	@Override
 	public void run() {
 		Random rnd = new Random(System.nanoTime());
-		String key = (NO) + "", msg_temper = null, msg_pressure = null; // key 组号, 用于分区
+		String key = (NO) + "", msg = null; // key 组号, 用于分区
 		try {
 			double[] randValue = {min[0] + rnd.nextInt((max[0] - min[0]) * 1000) / 1000.0, min[1] + rnd.nextInt((max[1] - min[1]) * 1000) / 1000.0};
-			double value_temper, value_pressure;
+			double value;
 			int direct = -1;
 
-			//int i = 100;
-			//long startTime = System.nanoTime(); // 获取开始时间
-			//while ((i--) != 0) {
+			// int i = 100;
+			// long startTime = System.nanoTime(); // 获取开始时间
+			// while ((i--) != 0) {
 			while (true) {
-				// temper
-				if (rnd.nextInt() % 2 == 0)
-					direct *= -1;
-				randValue[0] = randValue[0] + direct * rnd.nextInt(1000) * rnd.nextGaussian() / 1000; // 下一个尽量连续的随机数
-				while (randValue[0] > max[0])
-					randValue[0] -= rnd.nextDouble() / 1000;
-				while (randValue[0] < min[0])
-					randValue[0] += rnd.nextDouble() / 1000;
-				value_temper = (int) (randValue[0] * 10000) / 10000.0; // 精度为 4 位小数
-				// time:type:value
-				msg_temper = (new Date().getTime() * 1000 + System.nanoTime() % 1000000 / 1000) + ":" + 0 + ":" + value_temper;
-				this.producer.send(new ProducerRecord<String, String>(Topic[0], key, msg_temper));
-				System.out.println(msg_temper);
-
-				// pressure
-				if (rnd.nextInt() % 2 == 0)
-					direct *= -1;
-				randValue[1] = randValue[1] + direct * rnd.nextInt(1000) * rnd.nextGaussian() / 1000; // 下一个尽量连续的随机数
-				while (randValue[1] > max[1])
-					randValue[1] -= rnd.nextDouble() / 1000;
-				while (randValue[1] < min[1])
-					randValue[1] += rnd.nextDouble() / 1000;
-				value_pressure = (int) (randValue[1] * 10000) / 10000.0; // 精度为 4 位小数
-				// time:type:value
-				msg_pressure = (new Date().getTime() * 1000 + System.nanoTime() % 1000000 / 1000) + ":" + 1 + ":" + value_pressure;
-				this.producer.send(new ProducerRecord<String, String>(Topic[1], key, msg_pressure));
-				System.out.println(msg_pressure);
+				for (int type = 0; type < 2; type++) { // 0 for temper, 1 for pressure
+					if (rnd.nextInt() % 2 == 0)
+						direct *= -1;
+					randValue[type] = randValue[type] + direct * rnd.nextInt(1000) * rnd.nextGaussian() / 10000; // 下一个尽量连续的随机数
+					while (randValue[type] > max[type])
+						randValue[type] -= rnd.nextDouble() / 1000;
+					while (randValue[type] < min[type])
+						randValue[type] += rnd.nextDouble() / 1000;
+					value = (int) (randValue[type] * 10000) / 10000.0; // 精度为 4 位小数
+					// time:type:value
+					msg = (new Date().getTime() * 1000 + System.nanoTime() % 1000000 / 1000) + ":" + type + ":" + value;
+					this.producer.send(new ProducerRecord<String, String>(Topic[type], key, msg));
+					System.out.println(msg);
+				}
 
 				// sleep 为便于观察
 				try {
@@ -79,8 +66,8 @@ public class SensorProducer extends Thread {
 				} catch (InterruptedException e) {
 				}
 			}
-			//long endTime = System.nanoTime(); // 获取结束时间
-			//System.out.println((endTime - startTime) / 1000000000.0);
+			// long endTime = System.nanoTime(); // 获取结束时间
+			// System.out.println((endTime - startTime) / 1000000000.0);
 		} finally {
 			this.producer.close();
 		}

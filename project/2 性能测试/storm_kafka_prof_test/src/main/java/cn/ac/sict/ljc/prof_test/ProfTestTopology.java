@@ -37,19 +37,19 @@ public class ProfTestTopology {
 		String zkStr = configProps.getProperty("zkStr");
 		String zkRoot = configProps.getProperty("zkRoot");
 		String kafkaStr = configProps.getProperty("kafkaStr");
-		String inputTopic_ljc_demo = configProps.getProperty("inputTopic_ljc_prof_test");
-		String outputTopic_ljc_demo = configProps.getProperty("outputTopic_ljc_prof_test");
-		String spoutId_ljc_demo = configProps.getProperty("spoutId_ljc_prof_test");
+		String inputTopic_ljc_prof_test = configProps.getProperty("inputTopic_ljc_prof_test");
+		String outputTopic_ljc_prof_test = configProps.getProperty("outputTopic_ljc_prof_test");
+		String spoutId_ljc_prof_test = configProps.getProperty("spoutId_ljc_prof_test");
 
-		log.info("inputTopic_ljc_demo = " + inputTopic_ljc_demo + ", outputTopic_ljc_demo = " + outputTopic_ljc_demo + ", spoutId = " + spoutId_ljc_demo);
+		log.info("inputTopic_ljc_demo = " + inputTopic_ljc_prof_test + ", outputTopic_ljc_demo = " + outputTopic_ljc_prof_test + ", spoutId = " + spoutId_ljc_prof_test);
 
 		BrokerHosts brokerHosts = new ZkHosts(zkStr, zkRoot);
 
 		// 定义spoutConfig
 		SpoutConfig spoutConfig = new SpoutConfig(brokerHosts, // 第一个参数 hosts 是上面定义的 brokerHosts
-				inputTopic_ljc_demo,                           // 第二个参数 topic 是该 KafkaSpout 订阅的 topic 名称
+				inputTopic_ljc_prof_test,                           // 第二个参数 topic 是该 KafkaSpout 订阅的 topic 名称
 				zkRoot,                                        // 第三个参数 zkRoot 是存储消费的 offset(存储在 ZK 中了), 当该 topology 故障重启后会将故障期间未消费的 message 继续消费而不会丢失(可配置)
-				spoutId_ljc_demo                               // 第四个参数 id 是当前 spout 的唯一标识
+				spoutId_ljc_prof_test                               // 第四个参数 id 是当前 spout 的唯一标识
 		);
 
 		spoutConfig.scheme = new SchemeAsMultiScheme(new MessageScheme());
@@ -72,7 +72,7 @@ public class ProfTestTopology {
 
 		KafkaBolt<String, String> kafkaBolt = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)
-				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_demo))
+				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_prof_test))
 				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", "res")); // 没有 key, 只传 value
 
 		String Bolt2 = KafkaBolt.class.getSimpleName();
