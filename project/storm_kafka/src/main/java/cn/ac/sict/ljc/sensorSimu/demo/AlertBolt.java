@@ -1,4 +1,4 @@
-package cn.ac.sict.ljc.sensorSimu;
+package cn.ac.sict.ljc.sensorSimu.demo;
 
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -16,7 +16,7 @@ public class AlertBolt extends BaseBasicBolt {
 	private static final long serialVersionUID = 3307570869378763288L;
 
 	private static final double[][] Threshold = {{31, 69}, {3.05, 4.95}};
-	private static final String[][] sensorType = {{"temper", "pressure"}, {"温度", "气压"}};
+	private static final String[][] sensorType = {{"ljc_sensor_temper", "ljc_sensor_pressure"}, {"温度", "气压"}};
 
 	@Override
 	public void execute(Tuple tuple, BasicOutputCollector collector) {

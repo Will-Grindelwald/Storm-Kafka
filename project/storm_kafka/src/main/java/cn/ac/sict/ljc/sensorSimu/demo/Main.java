@@ -1,4 +1,4 @@
-package cn.ac.sict.ljc.sensorSimu;
+package cn.ac.sict.ljc.sensorSimu.demo;
 
 import java.io.IOException;
 import java.util.Properties;

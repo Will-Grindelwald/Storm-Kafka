@@ -21,7 +21,7 @@ public class AlertBolt extends BaseBasicBolt {
 	/* long: serialVersionUID * description： */
 	private static final long serialVersionUID = 3307570869378763288L;
 
-	private static final String[][] sensorType = {{"temper", "pressure"}, {"温度", "气压"}};
+	private static final String[] sensorChannel = {"ljc_sensor_temper", "ljc_sensor_pressure"};
 
 	private static final String host = "192.168.125.171";
 	private static final int port = 6378;
@@ -38,7 +38,7 @@ public class AlertBolt extends BaseBasicBolt {
 			HashMap<String, String> jsonMap = new HashMap<String, String>();
 			jsonMap.put("time", msg[0]);
 			jsonMap.put("value", msg[2]);
-			jedis.publish(sensorType[0][type], JSONObject.toJSONString(jsonMap));
+			jedis.publish(sensorChannel[type], JSONObject.toJSONString(jsonMap));
 		}
 		pool.close();
 

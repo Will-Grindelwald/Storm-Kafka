@@ -1,4 +1,4 @@
-package cn.ac.sict.ljc.sensorSimu;
+package cn.ac.sict.ljc.sensorSimu.demo;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
