@@ -12,7 +12,7 @@ import redis.clients.jedis.JedisPoolConfig;
 
 public class Test {
 
-	private static String[] Topic = { "ljc_input_sensor_temper", "ljc_input_sensor_pressure" };
+	private static String[] Topic = { "ljc_sensor_temper", "ljc_sensor_pressure" };
 	private static int[] min = { 30, 3 }, max = { 70, 5 };
 
 	public static void main(String[] args) {
@@ -29,8 +29,8 @@ public class Test {
 			double[] randValue = { min[0] + rnd.nextInt((max[0] - min[0]) * 1000) / 1000.0,
 					min[1] + rnd.nextInt((max[1] - min[1]) * 1000) / 1000.0 };
 
-			int direct = -1;
 			double value_temper, value_pressure;
+			int direct = -1;
 			long time;
 
 			int i = 1000;

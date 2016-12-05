@@ -35,35 +35,47 @@ public class SensorProducer extends Thread {
 	@Override
 	public void run() {
 		Random rnd = new Random(System.nanoTime());
-		String topic = null, key = null, msg = null;
-		int no;
+		String key = (NO) + "", msg_temper = null, msg_pressure = null; // key 组号, 用于分区
 		try {
 			double[] randValue = {min[0] + rnd.nextInt((max[0] - min[0]) * 1000) / 1000.0, min[1] + rnd.nextInt((max[1] - min[1]) * 1000) / 1000.0};
-			double value;
+			double value_temper, value_pressure;
 			int direct = -1;
+
 			//int i = 100;
 			//long startTime = System.nanoTime(); // 获取开始时间
 			//while ((i--) != 0) {
 			while (true) {
-				//no = rnd.nextInt(2); // 0 温度, 1 压力
-				no = 0;
-				topic = Topic[no];
-				key = (NO) + ""; // 组号, 用于分区
-				
-				if(rnd.nextInt() % 2 == 0) direct *= -1;
-				randValue[no] = randValue[no] + direct * rnd.nextInt(1000) * rnd.nextGaussian() / 1000; // 下一个尽量连续的随机数
-				while(randValue[no] > max[no]) randValue[no] -= rnd.nextDouble() / 1000;
-				while(randValue[no] < min[no]) randValue[no] += rnd.nextDouble() / 1000;
-				value = (int)(randValue[no] * 10000) / 10000.0; // 精度为 4 位小数
-
+				// temper
+				if (rnd.nextInt() % 2 == 0)
+					direct *= -1;
+				randValue[0] = randValue[0] + direct * rnd.nextInt(1000) * rnd.nextGaussian() / 1000; // 下一个尽量连续的随机数
+				while (randValue[0] > max[0])
+					randValue[0] -= rnd.nextDouble() / 1000;
+				while (randValue[0] < min[0])
+					randValue[0] += rnd.nextDouble() / 1000;
+				value_temper = (int) (randValue[0] * 10000) / 10000.0; // 精度为 4 位小数
 				// time:type:value
-				msg = (new Date().getTime() * 1000 + System.nanoTime() % 1000000 / 1000) + ":" + no + ":" + value;
-				this.producer.send(new ProducerRecord<String, String>(topic, key, msg));
-				System.out.println(msg);
+				msg_temper = (new Date().getTime() * 1000 + System.nanoTime() % 1000000 / 1000) + ":" + 0 + ":" + value_temper;
+				this.producer.send(new ProducerRecord<String, String>(Topic[0], key, msg_temper));
+				System.out.println(msg_temper);
+
+				// pressure
+				if (rnd.nextInt() % 2 == 0)
+					direct *= -1;
+				randValue[1] = randValue[1] + direct * rnd.nextInt(1000) * rnd.nextGaussian() / 1000; // 下一个尽量连续的随机数
+				while (randValue[1] > max[1])
+					randValue[1] -= rnd.nextDouble() / 1000;
+				while (randValue[1] < min[1])
+					randValue[1] += rnd.nextDouble() / 1000;
+				value_pressure = (int) (randValue[1] * 10000) / 10000.0; // 精度为 4 位小数
+				// time:type:value
+				msg_pressure = (new Date().getTime() * 1000 + System.nanoTime() % 1000000 / 1000) + ":" + 1 + ":" + value_pressure;
+				this.producer.send(new ProducerRecord<String, String>(Topic[1], key, msg_pressure));
+				System.out.println(msg_pressure);
 
 				// sleep 为便于观察
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(999);
 				} catch (InterruptedException e) {
 				}
 			}
