@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <script src="jquery.min.js"></script>
+  <script src="d3.min.js"></script>
+  <script src="epoch.min.js"></script>
+  <script src="socket.io.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="epoch.min.css">
+  <style>
+    body {
+      background: #333;
+      color: #d0d0d0;
+    }
+    
+    a:link,
+    a:visited {
+      color: white;
+      color: white;
+    }
+  </style>
+</head>
+
+<body class="epoch-theme-dark">
+  <h1>Real-time Monitoring</h1>
+  <!--<div id="myChart">
+    <div class="epoch" style="height: 300px"></div>
+    <p>
+      <button class="toggle" data-index="0">Toggle A</button>
+      <button class="toggle" data-index="1">Toggle B</button>
+      <button class="toggle" data-index="2">Toggle C</button>
+      <button class="playback">Play</button>
+    </p>
+  </div>-->
+
+  <div id="myChart2">
+    <div class="epoch" style="height: 300px"></div>
+    <p></p>
+  </div>
+
+  <!--<script>
+    var nextTime = (function() {
+      var currentTime = parseInt(new Date().getTime() / 1000);
+      return function() { return currentTime++; }
+    })();
+
+    $(function() {
+      var data = [
+          {label: 'A', values: []},
+          {label: 'B', values: []},
+          {label: 'C', values: []}
+        ],
+        length = 40,
+        nextIndex = length,
+        scale = 0.1,
+        playing = false,
+        interval = null;
+
+      var chart = $('#myChart .epoch').epoch({
+        type: 'time.line',
+        data: data,
+        axes: ['right', 'bottom'],
+        margins: {top: 20, left: 20, bottom: 20, right: 20 }
+      });
+
+      $('#myChart .toggle').click(function(e) {
+        var index = parseInt($(e.target).attr('data-index'));
+        chart.toggleLayer(index);
+      });
+
+      var pushPoint = function() {
+        var x = (nextIndex +1) * scale,
+          time = nextTime();
+        chart.push([
+          { time: time, y: x},
+          { time: time, y: x * Math.log(x)},
+          { time: time, y: x * Math.pow(Math.log(x), 2)}
+        ]);
+        nextIndex++;
+      };
+
+      $('#myChart .playback').on('click', function(e) {
+        if (playing) {
+          $(e.target).text('Play');
+          clearInterval(interval);
+        } else {
+          $(e.target).text('Pause');
+          interval = setInterval(pushPoint, 1000);
+          pushPoint();
+        }
+        playing = !playing;
+      });
+    });
+  </script>-->
+
+  <script>
+    $(function() {
+      var socket = io('http://localhost');
+      socket.on('new', function (data) {
+        console.log("time: " + data.time + "  value: " + data.value);
+        var tmp = [{ time: data.time, y: data.value }];
+        myChart.push(tmp);
+      });
+
+      var myData = [{ label: "aaa", values: [] }];
+      var myChart = $('#myChart2 .epoch').epoch({ type: 'time.line', data: myData, axes: ['left', 'bottom', 'right'], ticks: { time: 5, right: 9, left: 9 } });
+
+      // setInterval(function() {
+      //   var tmp = [{ time: nextTime(), y: Math.random() * 100 }];
+      //   //console.log(new Date(tmp[0].time));
+      //   //console.log(tmp[0].time+" "+tmp[0].y);
+      //   myChart.push(tmp);
+      // }, 1000);
+    });
+  </script>
+</body>
+
+</html>

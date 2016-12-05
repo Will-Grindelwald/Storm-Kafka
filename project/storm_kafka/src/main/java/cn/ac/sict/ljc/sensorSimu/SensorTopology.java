@@ -45,14 +45,14 @@ public class SensorTopology {
 
 		log.info("inputTopic_ljc_sensor_temper = " + inputTopic_ljc_sensor_temper + ", outputTopic_ljc_sensor_temper = " + outputTopic_ljc_sensor_temper + "inputTopic_ljc_sensor_pressure = " + inputTopic_ljc_sensor_pressure + ", outputTopic_ljc_sensor_pressure = " + outputTopic_ljc_sensor_pressure + ", zkRoot = " + zkRoot + ", spoutId1 = " + spoutId_ljc_sensor_temper + ", spoutId2 = " + spoutId_ljc_sensor_pressure);
 
-		// 定义spoutConfig1
+		// 定义 spoutConfig1
 		SpoutConfig spoutConfig1 = new SpoutConfig(new ZkHosts(zkStr, zkRoot),
 				inputTopic_ljc_sensor_temper,
 				zkRoot,
 				spoutId_ljc_sensor_temper
 		);
 		
-		// 定义spoutConfig2
+		// 定义 spoutConfig2
 		SpoutConfig spoutConfig2 = new SpoutConfig(new ZkHosts(zkStr, zkRoot),
 				inputTopic_ljc_sensor_pressure,
 				zkRoot,
@@ -81,11 +81,13 @@ public class SensorTopology {
 		producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
+		// 定义 kafkaBolt1
 		KafkaBolt<String, String> kafkaBolt1 = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)
 				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_sensor_temper))
 				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", "warningTemper")); // 没有 key, 只传 value
 
+		// 定义 kafkaBolt2
 		KafkaBolt<String, String> kafkaBolt2 = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)
 				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_sensor_pressure))
