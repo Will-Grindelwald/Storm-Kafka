@@ -44,13 +44,11 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
-					<!-- 提交 topology 时要指定入口, 这里就不指定主类了
 					<archive>
 						<manifest>
-							<mainClass></mainClass>
+							<mainClass>cn.ac.sict.ljc.redis_test.Test</mainClass>
 						</manifest>
 					</archive>
-					 -->
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>

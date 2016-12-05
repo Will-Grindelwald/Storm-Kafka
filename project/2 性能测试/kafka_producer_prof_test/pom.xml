@@ -37,7 +37,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>cn.ac.sict.kafka_producer_prof_test.TestProducer</mainClass>
+							<mainClass>cn.ac.sict.ljc.kafka_producer_prof_test.TestProducer</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

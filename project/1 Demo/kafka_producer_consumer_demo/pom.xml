@@ -37,7 +37,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>cn.ac.sict.kafka_producer_consumer_demo.KafkaProducerConsumerDemo</mainClass>
+							<mainClass>cn.ac.sict.ljc.kafka_producer_consumer_demo.KafkaProducerConsumerDemo</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

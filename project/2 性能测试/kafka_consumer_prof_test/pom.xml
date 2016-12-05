@@ -37,7 +37,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>cn.ac.sict.kafka_consumer_prof_test.TestConsumer</mainClass>
+							<mainClass>cn.ac.sict.ljc.kafka_consumer_prof_test.TestConsumer</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

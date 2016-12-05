@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>cn.ac.sict</groupId>
-	<artifactId>kafka_consumer_demo</artifactId>
+	<artifactId>storm_kafka_sensor_terminal</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
-	<name>kafka_consumer_demo</name>
+	<name>storm_kafka_sensor_terminal</name>
 
 	<repositories>
 	</repositories>
@@ -16,6 +16,42 @@
 	</properties>
 
 	<dependencies>
+
+		<!-- storm -->
+		<dependency>
+			<groupId>org.apache.storm</groupId>
+			<artifactId>storm-core</artifactId>
+			<version>1.0.2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- storm-kafka -->
+		<dependency>
+			<groupId>org.apache.storm</groupId>
+			<artifactId>storm-kafka</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<!-- kafka -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka_2.11</artifactId>
+			<version>0.9.0.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.zookeeper</groupId>
+					<artifactId>zookeeper</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<!-- kafka new java client API -->
 		<dependency>
@@ -35,11 +71,13 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
+					<!-- 提交 topology 时要指定入口, 这里就不指定主类了
 					<archive>
 						<manifest>
-							<mainClass>cn.ac.sict.ljc.kafka_consumer_demo.TestConsumer</mainClass>
+							<mainClass></mainClass>
 						</manifest>
 					</archive>
+					 -->
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
