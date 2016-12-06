@@ -13,7 +13,7 @@ import org.apache.storm.kafka.bolt.selector.DefaultTopicSelector;
 
 import java.util.Properties;
 
-import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
@@ -42,7 +42,7 @@ public class WordCountTopology {
 		String outputTopic_ljc_demo = configProps.getProperty("outputTopic_ljc_demo");
 		String spoutId_ljc_demo = configProps.getProperty("spoutId_ljc_demo");
 
-		log.info("inputTopic_ljc_demo = " + inputTopic_ljc_demo + ", outputTopic_ljc_demo = " + outputTopic_ljc_demo + ", spoutId = " + spoutId_ljc_demo);
+		log.info("\n inputTopic_ljc_demo = " + inputTopic_ljc_demo + "\n outputTopic_ljc_demo = " + outputTopic_ljc_demo + "\n spoutId = " + spoutId_ljc_demo);
 
 		// BrokerHosts 接口有 2 个实现类 StaticHosts 和 ZkHosts, ZkHosts 会定时(默认 60 秒)从 ZK 中更新 brokers 的信息(可以通过修改 host.refreshFreqSecs 来设置), StaticHosts 则不会
 		// 第二个参数 brokerZkPath 为 zookeeper 中存储 topic 的路径, kafka 的默认配置为 /brokers
@@ -61,7 +61,7 @@ public class WordCountTopology {
 
 		builder = new TopologyBuilder();
 
-		// 设置 spout
+		// 设置 spout: KafkaSpout
 		String Spout = KafkaSpout.class.getSimpleName();
 		builder.setSpout(Spout, new KafkaSpout(spoutConfig), 1); // topic 的分区数(partitions)最好是 KafkaSpout 的并发度的倍数
 
@@ -78,8 +78,8 @@ public class WordCountTopology {
 		Properties producerProps = new Properties();
 		producerProps.put("bootstrap.servers", kafkaStr);
 		producerProps.put("acks", "all");
-		producerProps.put("key.serializer", StringDeserializer.class.getName());
-		producerProps.put("value.serializer", StringDeserializer.class.getName());
+		producerProps.put("key.serializer", StringSerializer.class.getName());
+		producerProps.put("value.serializer", StringSerializer.class.getName());
 
 		KafkaBolt<String, String> kafkaBolt = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)

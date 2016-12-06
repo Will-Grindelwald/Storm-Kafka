@@ -30,9 +30,9 @@ public class Main {
 		// 配置 cn.ac.sict.ljc.demo.WordCountTopology
 		WordCountTopology wordCountTopology = new WordCountTopology(configProps);
 		if (args == null || args.length == 0)
-			wordCountTopology.submit(null);
+			wordCountTopology.submit(null); // 无参则本地模式
 		else
-			wordCountTopology.submit(args[0]);
+			wordCountTopology.submit(args[0]); // 有参则集群模式
 
 	}
 }

@@ -13,7 +13,7 @@ import org.apache.storm.kafka.bolt.selector.DefaultTopicSelector;
 
 import java.util.Properties;
 
-import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
@@ -42,7 +42,7 @@ public class ProfTestTopology {
 		String outputTopic_ljc_prof_test = configProps.getProperty("outputTopic_ljc_prof_test");
 		String spoutId_ljc_prof_test = configProps.getProperty("spoutId_ljc_prof_test");
 
-		log.info("inputTopic_ljc_demo = " + inputTopic_ljc_prof_test + ", outputTopic_ljc_demo = " + outputTopic_ljc_prof_test + ", spoutId = " + spoutId_ljc_prof_test);
+		log.info("\n inputTopic_ljc_demo = " + inputTopic_ljc_prof_test + "\n outputTopic_ljc_demo = " + outputTopic_ljc_prof_test + "\n spoutId = " + spoutId_ljc_prof_test);
 
 		BrokerHosts brokerHosts = new ZkHosts(zkStr, zkRoot);
 
@@ -57,10 +57,11 @@ public class ProfTestTopology {
 
 		builder = new TopologyBuilder();
 
-		// 设置 spout
+		// 设置 spout: KafkaSpout
 		String Spout = KafkaSpout.class.getSimpleName();
 		builder.setSpout(Spout, new KafkaSpout(spoutConfig), 4); // topic 的分区数(partitions)最好是 KafkaSpout 的并发度的倍数
 
+		// 设置 一级 bolt
 		String Bolt1 = CountBolt.class.getSimpleName();
 		builder.setBolt(Bolt1, new CountBolt(), 4) // 并行度 8
 				.shuffleGrouping(Spout); // 上一级是 kafkaSpout, 随机分组
@@ -68,14 +69,15 @@ public class ProfTestTopology {
 		Properties producerProps = new Properties();
 		producerProps.put("bootstrap.servers", kafkaStr);
 		producerProps.put("acks", "1");
-		producerProps.put("key.serializer", StringDeserializer.class.getName());
-		producerProps.put("value.serializer", StringDeserializer.class.getName());
+		producerProps.put("key.serializer", StringSerializer.class.getName());
+		producerProps.put("value.serializer", StringSerializer.class.getName());
 
 		KafkaBolt<String, String> kafkaBolt = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)
 				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_prof_test))
 				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", "res")); // 没有 key, 只传 value
 
+		// 设置 二级 bolt: KafakBolt
 		String Bolt2 = KafkaBolt.class.getSimpleName();
 		builder.setBolt(Bolt2, kafkaBolt, 1)
 				.fieldsGrouping(Bolt1, new Fields("res"));

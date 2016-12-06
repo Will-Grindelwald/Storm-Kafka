@@ -12,7 +12,7 @@ import org.apache.storm.kafka.bolt.selector.DefaultTopicSelector;
 
 import java.util.Properties;
 
-import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
@@ -65,7 +65,7 @@ public class SensorTopology {
 
 		builder = new TopologyBuilder();
 
-		// 设置 spout
+		// 设置 spout: KafkaSpout
 		String Spout = KafkaSpout.class.getSimpleName();
 		builder.setSpout(Spout + "_temper", new KafkaSpout(spoutConfig1), 1);
 		builder.setSpout(Spout + "_pressure", new KafkaSpout(spoutConfig2), 1);
@@ -79,8 +79,8 @@ public class SensorTopology {
 		Properties producerProps = new Properties();
 		producerProps.put("bootstrap.servers", kafkaStr);
 		producerProps.put("acks", "all");
-		producerProps.put("key.serializer", StringDeserializer.class.getName());
-		producerProps.put("value.serializer", StringDeserializer.class.getName());
+		producerProps.put("key.serializer", StringSerializer.class.getName());
+		producerProps.put("value.serializer", StringSerializer.class.getName());
 
 		// 定义 kafkaBolt1
 		KafkaBolt<String, String> kafkaBolt1 = new KafkaBolt<String, String>()

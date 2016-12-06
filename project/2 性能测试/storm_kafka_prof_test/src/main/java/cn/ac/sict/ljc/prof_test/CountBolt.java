@@ -1,5 +1,7 @@
 package cn.ac.sict.ljc.prof_test;
 
+import java.util.Date;
+
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseBasicBolt;
@@ -18,7 +20,7 @@ public class CountBolt extends BaseBasicBolt {
 	private static final long serialVersionUID = -3494794413248427509L;
 
 	public Logger log = LoggerFactory.getLogger(CountBolt.class);
-	private static int count = 0;
+	private static long count = 0, sum = 0;
 	private static long startTime; // 获取开始时间
 
 	@Override
@@ -30,8 +32,9 @@ public class CountBolt extends BaseBasicBolt {
 		//log.info(word.length() + ":" + count);
 		if (count == 0) startTime = System.nanoTime();
 		count++;
+		sum++;
 		if ((System.nanoTime() - startTime) / 1000000000 >= 1) {
-			collector.emit(new Values(new String("每秒接收: " + count + "条数据")));
+			collector.emit(new Values(new String("每秒接收: " + count + "条数据 " + new Date().getTime() / 1000 + " 总计: " + sum)));
 			count = 0;
 			startTime = System.nanoTime();
 		}

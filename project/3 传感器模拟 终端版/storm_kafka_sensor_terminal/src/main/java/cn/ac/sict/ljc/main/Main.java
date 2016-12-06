@@ -11,6 +11,7 @@ import cn.ac.sict.ljc.sensorSimu_terminal.SensorTopology;
 
 /**
  * storm 提交时指定此 Main 类为入口, 则运行所有配置了的拓扑
+ * 不是用于测试, 所以直接集群模式
  */
 public class Main {
 
@@ -26,7 +27,7 @@ public class Main {
 			return;
 		}
 
-		// 配置 cn.ac.sict.ljc.demo.WordCountTopology
+		// 配置 cn.ac.sict.ljc.sensorSimu_terminal.SensorTopology
 		SensorTopology sensorTopology = new SensorTopology(configProps);
 		sensorTopology.submit(configProps.getProperty("topologyName_ljc_sensor"));
 

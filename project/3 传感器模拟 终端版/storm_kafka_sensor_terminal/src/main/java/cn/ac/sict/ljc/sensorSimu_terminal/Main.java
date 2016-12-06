@@ -27,9 +27,9 @@ public class Main {
 		// 配置 cn.ac.sict.ljc.sensor.temper.SensorTemperTopology
 		SensorTopology sensorTopology = new SensorTopology(configProps);
 		if (args == null || args.length == 0)
-			sensorTopology.submit(null);
+			sensorTopology.submit(null); // 无参则本地模式
 		else
-			sensorTopology.submit(args[0]);
+			sensorTopology.submit(args[0]); // 有参则集群模式
 
 	}
 }

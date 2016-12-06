@@ -11,6 +11,7 @@ import cn.ac.sict.ljc.sensorSimu_visualization.SensorTopology;
 
 /**
  * storm 提交时指定此 Main 类为入口, 则运行所有配置了的拓扑
+ * 不是用于测试, 所以直接集群模式
  */
 public class Main {
 

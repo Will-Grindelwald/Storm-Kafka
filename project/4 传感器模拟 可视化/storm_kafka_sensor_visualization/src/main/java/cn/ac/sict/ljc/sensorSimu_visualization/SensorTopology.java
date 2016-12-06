@@ -58,7 +58,7 @@ public class SensorTopology {
 
 		builder = new TopologyBuilder();
 
-		// 设置 spout
+		// 设置 spout: KafkaSpout
 		String Spout = KafkaSpout.class.getSimpleName();
 		builder.setSpout(Spout + "_temper", new KafkaSpout(spoutConfig1), 1);
 		builder.setSpout(Spout + "_pressure", new KafkaSpout(spoutConfig2), 1);

@@ -13,7 +13,7 @@ import org.apache.storm.tuple.Values;
 public class WordSplitBolt extends BaseBasicBolt {
 
 	/* long: serialVersionUID * description： */
-	private static final long serialVersionUID = -3494794413248427509L;
+	private static final long serialVersionUID = -3493794413248427509L;
 
 	@Override
 	public void execute(Tuple tuple, BasicOutputCollector collector) {

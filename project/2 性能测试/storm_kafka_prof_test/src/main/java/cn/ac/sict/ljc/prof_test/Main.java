@@ -24,11 +24,11 @@ public class Main {
 			return;
 		}
 
-		// 配置 cn.ac.sict.ljc.demo.WordCountTopology
-		ProfTestTopology wordCountTopology = new ProfTestTopology(configProps);
+		// 配置 cn.ac.sict.ljc.prof_test.ProfTestTopology
+		ProfTestTopology profTestTopology = new ProfTestTopology(configProps);
 		if (args == null || args.length == 0)
-			wordCountTopology.submit(null);
+			profTestTopology.submit(null); // 无参则本地模式
 		else
-			wordCountTopology.submit(args[0]);
+			profTestTopology.submit(args[0]); // 有参则集群模式
 	}
 }

@@ -11,12 +11,18 @@ import org.apache.kafka.common.serialization.StringDeserializer;
  * 
  */
 public class TestConsumer {
+
+	public static final String kafkaStr = "master-cent7-1:9092,master-cent7-2:9092,master-cent7-3:9092";
+	public static final String groupId = "ljc_prof_test";
+
+	private final KafkaConsumer<String, String> consumer;
+
 	public static void main(String[] args) {
-		
-		String kafkaStr = "master-cent7-1:9092,master-cent7-2:9092,master-cent7-3:9092";
-		String topicStr = args[0];
-		String groupId = "ljc_test";
-		
+		TestConsumer consumer = new TestConsumer();
+		consumer.recive(args[0]); // args[0] 为要接收的 topic
+	}
+
+	public TestConsumer() {
 		Properties props = new Properties();
 		props.put("bootstrap.servers", kafkaStr); // kafka brokers 字符串
 		props.put("group.id", groupId);           // group.id 标识属于哪个消费者组
@@ -27,9 +33,11 @@ public class TestConsumer {
 		props.put("key.deserializer", StringDeserializer.class.getName()); // key 的序列化处理类
 		props.put("value.deserializer", StringDeserializer.class.getName()); // value 的序列化处理类
 
-		KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(props);
-		consumer.subscribe(Arrays.asList(topicStr));
+		this.consumer = new KafkaConsumer<String, String>(props);
+	}
 
+	public void recive(String topicStr) {
+		consumer.subscribe(Arrays.asList(topicStr));
 		try {
 			while (true) {
 				// poll 轮询 message, 参数为 timeout, 单位 ms, 超时则返回空

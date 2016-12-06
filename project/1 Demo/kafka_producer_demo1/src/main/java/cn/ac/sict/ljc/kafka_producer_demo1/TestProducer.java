@@ -14,9 +14,13 @@ public class TestProducer {
 
 	public static final String kafkaStr = "master-cent7-1:9092,master-cent7-2:9092,master-cent7-3:9092";
 	public static final String partitioner = SimplePartitioner.class.getName();
-	public static final String topicStr = "ljc_page_visits";
 
 	private final Producer<String, String> producer;
+
+	public static void main(String[] args) {
+		TestProducer producer = new TestProducer();
+		producer.send(args[0], args[1]); // args[0] 为要发送的 topic, args[1] 为要生成的随机消息数
+	}
 
 	public TestProducer() {
 		Properties props = new Properties();
@@ -32,8 +36,8 @@ public class TestProducer {
 		this.producer = new Producer<String, String>(config); // <分区的键的类型, 值的类型>
 	}
 
-	private void send(String arg) {
-		long events = Long.parseLong(arg);
+	private TestProducer send(String topicStr, String numbers) {
+		long events = Long.parseLong(numbers);
 		Random rnd = new Random();
 		try {
 			long startTime = System.nanoTime(); // 获取开始时间
@@ -50,12 +54,7 @@ public class TestProducer {
 		} finally {
 			producer.close();
 		}
-
-	}
-
-	public static void main(String[] args) {
-		TestProducer producer = new TestProducer();
-		producer.send(args[0]); // args[0] 为要生成的随机消息数
+		return this;
 	}
 
 }
