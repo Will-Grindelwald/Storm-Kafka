@@ -5,6 +5,7 @@ import java.util.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 /**
  * 
@@ -12,7 +13,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 public class TestProducer {
 
 	public static final String kafkaStr = "master-cent7-1:9092,master-cent7-2:9092,master-cent7-3:9092";
-	public static final String partitioner = "cn.ac.sict.kafka_producer_prof_test.SimplePartitioner";
+	public static final String partitioner = SimplePartitioner.class.getName();
 	public final String topicStr;
 	private final Producer<String, String> producer;
 
@@ -30,8 +31,8 @@ public class TestProducer {
 		props.put("linger.ms", 1);
 		props.put("buffer.memory", 33554432);
 		// 指定序列化处理类，默认为 org.apache.kafka.common.serialization.DefaultEncoder, 即 byte[]
-		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer"); // key 的序列化处理类
-		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer"); // value 的序列化处理类
+		props.put("key.serializer", StringDeserializer.class.getName()); // key 的序列化处理类
+		props.put("value.serializer", StringDeserializer.class.getName()); // value 的序列化处理类
 		// 指定分区处理类，默认为 org.apache.kafka.clients.producer.internals.DefaultPartitioner
 		props.put("partitioner.class", partitioner); // 定义了使用哪个类来决定消息的分区
 

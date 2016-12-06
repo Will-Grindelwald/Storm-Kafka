@@ -13,6 +13,7 @@ import org.apache.storm.kafka.bolt.selector.DefaultTopicSelector;
 
 import java.util.Properties;
 
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
@@ -47,9 +48,9 @@ public class ProfTestTopology {
 
 		// 定义spoutConfig
 		SpoutConfig spoutConfig = new SpoutConfig(brokerHosts, // 第一个参数 hosts 是上面定义的 brokerHosts
-				inputTopic_ljc_prof_test,                           // 第二个参数 topic 是该 KafkaSpout 订阅的 topic 名称
+				inputTopic_ljc_prof_test,                      // 第二个参数 topic 是该 KafkaSpout 订阅的 topic 名称
 				zkRoot,                                        // 第三个参数 zkRoot 是存储消费的 offset(存储在 ZK 中了), 当该 topology 故障重启后会将故障期间未消费的 message 继续消费而不会丢失(可配置)
-				spoutId_ljc_prof_test                               // 第四个参数 id 是当前 spout 的唯一标识
+				spoutId_ljc_prof_test                          // 第四个参数 id 是当前 spout 的唯一标识
 		);
 
 		spoutConfig.scheme = new SchemeAsMultiScheme(new MessageScheme());
@@ -67,8 +68,8 @@ public class ProfTestTopology {
 		Properties producerProps = new Properties();
 		producerProps.put("bootstrap.servers", kafkaStr);
 		producerProps.put("acks", "1");
-		producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-		producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		producerProps.put("key.serializer", StringDeserializer.class.getName());
+		producerProps.put("value.serializer", StringDeserializer.class.getName());
 
 		KafkaBolt<String, String> kafkaBolt = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)

@@ -7,10 +7,11 @@ import java.util.Random;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 public class SensorProducer extends Thread {
 
-	private static final String partitioner = "cn.ac.sict.kafka_producer_sensor.SimplePartitioner";
+	private static final String partitioner = SimplePartitioner.class.getName();
 	private static final String[] Topic = {"ljc_input_sensor_temper", "ljc_input_sensor_pressure"};
 	private static final int[] min = {30, 3}, max = {70, 5};
 	private final int NO; // 组号, 用于分区
@@ -25,8 +26,8 @@ public class SensorProducer extends Thread {
 		props.put("batch.size", 16384);
 		props.put("linger.ms", 1);
 		props.put("buffer.memory", 33554432);
-		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		props.put("key.serializer", StringDeserializer.class.getName());
+		props.put("value.serializer", StringDeserializer.class.getName());
 		props.put("partitioner.class", partitioner);
 		this.NO = no;
 		this.producer = new KafkaProducer<String, String>(props);

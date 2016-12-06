@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 public class Producer extends Thread {
 
@@ -18,8 +19,8 @@ public class Producer extends Thread {
 		props.put("batch.size", 16384);
 		props.put("linger.ms", 1);
 		props.put("buffer.memory", 33554432);
-		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		props.put("key.serializer", StringDeserializer.class.getName());
+		props.put("value.serializer", StringDeserializer.class.getName());
 		this.producer = new KafkaProducer<String, String>(props);
 		this.topic = topic;
 	}

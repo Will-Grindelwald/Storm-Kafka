@@ -12,6 +12,7 @@ import org.apache.storm.kafka.bolt.selector.DefaultTopicSelector;
 
 import java.util.Properties;
 
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
@@ -78,8 +79,8 @@ public class SensorTopology {
 		Properties producerProps = new Properties();
 		producerProps.put("bootstrap.servers", kafkaStr);
 		producerProps.put("acks", "all");
-		producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-		producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		producerProps.put("key.serializer", StringDeserializer.class.getName());
+		producerProps.put("value.serializer", StringDeserializer.class.getName());
 
 		// 定义 kafkaBolt1
 		KafkaBolt<String, String> kafkaBolt1 = new KafkaBolt<String, String>()

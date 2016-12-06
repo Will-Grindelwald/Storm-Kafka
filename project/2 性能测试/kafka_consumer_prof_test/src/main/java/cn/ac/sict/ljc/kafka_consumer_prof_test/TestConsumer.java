@@ -5,6 +5,7 @@ import java.util.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 /**
  * 
@@ -23,8 +24,8 @@ public class TestConsumer {
 		props.put("auto.commit.interval.ms", "1000");
 		props.put("session.timeout.ms", "30000");
 		// 指定序列化处理类，默认为 kafka.serializer.DefaultEncoder, 即 byte[]
-		props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer"); // key 的序列化处理类
-		props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer"); // value 的序列化处理类
+		props.put("key.deserializer", StringDeserializer.class.getName()); // key 的序列化处理类
+		props.put("value.deserializer", StringDeserializer.class.getName()); // value 的序列化处理类
 
 		KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(props);
 		consumer.subscribe(Arrays.asList(topicStr));
