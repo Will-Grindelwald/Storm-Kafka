@@ -23,13 +23,15 @@ public class WordCountBolt extends BaseBasicBolt {
 
 	public Logger log = LoggerFactory.getLogger(WordCountBolt.class);
 
+	public static final String field = "result";
+
 	private static Map<String, Integer> counts = new HashMap<String, Integer>();
 
 	@Override
 	public void execute(Tuple tuple, BasicOutputCollector collector) {
 
 		// 根据 field 获得上一个 bolt 传递过来的数据
-		String word = tuple.getStringByField("word");
+		String word = tuple.getStringByField(WordSplitBolt.field);
 
 		Integer count = counts.get(word);
 		if (count == null)
@@ -44,7 +46,7 @@ public class WordCountBolt extends BaseBasicBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
-		declarer.declare(new Fields("result"));
+		declarer.declare(new Fields(field));
 	}
 
 }

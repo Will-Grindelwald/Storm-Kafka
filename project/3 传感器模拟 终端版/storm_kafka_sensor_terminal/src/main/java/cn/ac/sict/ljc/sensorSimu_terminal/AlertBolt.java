@@ -15,14 +15,15 @@ public class AlertBolt extends BaseBasicBolt {
 	/* long: serialVersionUID * description： */
 	private static final long serialVersionUID = 5409424749649068963L;
 
-	private static final double[][] Threshold = {{31, 69}, {3.05, 4.95}};
-	public static final String[][] sensorType = {{"ljc_sensor_temper", "ljc_sensor_pressure"}, {"温度", "气压"}};
 	public static final String fieldsTemper = "warningTemper";
 	public static final String fieldsPressure = "warningPressure";
 
+	public static final String[][] sensorType = {{"ljc_sensor_temper", "ljc_sensor_pressure"}, {"温度", "气压"}};
+	private static final double[][] Threshold = {{31, 69}, {3.05, 4.95}};
+
 	@Override
 	public void execute(Tuple tuple, BasicOutputCollector collector) {
-		String[] msg = tuple.getStringByField("msg").split(":");
+		String[] msg = tuple.getStringByField(MessageScheme.field).split(":");
 		int type = Integer.valueOf(msg[1]); // 0 温度, 1 压力
 		double value = Double.valueOf(msg[2]);
 		if(value < Threshold[type][0])

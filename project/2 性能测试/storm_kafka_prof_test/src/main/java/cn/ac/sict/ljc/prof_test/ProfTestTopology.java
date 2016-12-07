@@ -75,12 +75,12 @@ public class ProfTestTopology {
 		KafkaBolt<String, String> kafkaBolt = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)
 				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_prof_test))
-				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", "res")); // 没有 key, 只传 value
+				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", CountBolt.field)); // 没有 key, 只传 value
 
 		// 设置 二级 bolt: KafakBolt
 		String Bolt2 = KafkaBolt.class.getSimpleName();
 		builder.setBolt(Bolt2, kafkaBolt, 1)
-				.fieldsGrouping(Bolt1, new Fields("res"));
+				.fieldsGrouping(Bolt1, new Fields(CountBolt.field));
 	}
 
 	public void submit(String topologyName) throws AlreadyAliveException, InvalidTopologyException, AuthorizationException {

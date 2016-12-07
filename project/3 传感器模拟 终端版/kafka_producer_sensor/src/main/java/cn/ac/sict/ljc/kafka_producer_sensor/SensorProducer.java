@@ -16,7 +16,7 @@ class Signal {
 
 public class SensorProducer extends Thread {
 
-	private static final String[] Topic = {"ljc_input_sensor_temper", "ljc_input_sensor_pressure"};
+	private static final String[] Topic = {"ljc_sensor_temper_in", "ljc_sensor_pressure_in"};
 	private static final int[] min = {30, 3}, max = {70, 5};
 
 	private static final String partitioner = SimplePartitioner.class.getName();

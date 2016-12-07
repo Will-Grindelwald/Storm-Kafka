@@ -73,7 +73,7 @@ public class WordCountTopology {
 		// 设置 二级 bolt
 		String Bolt2 = WordCountBolt.class.getSimpleName();
 		builder.setBolt(Bolt2, new WordCountBolt(), 12) // 并行度 12
-				.fieldsGrouping(Bolt1, new Fields("word")); // 上一级是 WordSplitBolt, 按字段分组
+				.fieldsGrouping(Bolt1, new Fields(WordSplitBolt.field)); // 上一级是 WordSplitBolt, 按字段分组
 
 		Properties producerProps = new Properties();
 		producerProps.put("bootstrap.servers", kafkaStr);
@@ -84,12 +84,12 @@ public class WordCountTopology {
 		KafkaBolt<String, String> kafkaBolt = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)
 				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_wordcount))
-				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", "result")); // 没有 key, 只传 value
+				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", WordCountBolt.field)); // 没有 key, 只传 value
 
 		// 设置 三级 bolt: KafakBolt
 		String Bolt3 = KafkaBolt.class.getSimpleName();
 		builder.setBolt(Bolt3, kafkaBolt, 8)
-				.fieldsGrouping(Bolt2, new Fields("result"));
+				.fieldsGrouping(Bolt2, new Fields(WordCountBolt.field));
 	}
 
 	public void submit(String topologyName) throws AlreadyAliveException, InvalidTopologyException, AuthorizationException {

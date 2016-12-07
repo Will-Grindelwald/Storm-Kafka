@@ -20,6 +20,9 @@ public class CountBolt extends BaseBasicBolt {
 	private static final long serialVersionUID = -5636890972113477455L;
 
 	public Logger log = LoggerFactory.getLogger(CountBolt.class);
+
+	public static final String field = "res";
+
 	private static long count = 0, sum = 0;
 	private static long startTime; // 获取开始时间
 
@@ -27,7 +30,7 @@ public class CountBolt extends BaseBasicBolt {
 	public void execute(Tuple tuple, BasicOutputCollector collector) {
 		// 根据 field 获得从 spout 传来的值,这里的 str 是 kafkaspout 的 spoutConfig.scheme 中定义好的 field
 		// String line = tuple.getStringByField("str");
-		String word = tuple.getStringByField("msg");
+		String word = tuple.getStringByField(MessageScheme.field);
 		word.length();
 		//log.info(word.length() + ":" + count);
 		if (count == 0) startTime = System.nanoTime();
@@ -43,7 +46,7 @@ public class CountBolt extends BaseBasicBolt {
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
 		// 声明本次 emit 出去的 field
-		declarer.declare(new Fields("res"));
+		declarer.declare(new Fields(field));
 	}
 
 }

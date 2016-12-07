@@ -64,8 +64,8 @@ public class SensorTopology {
 		builder.setSpout(Spout + "_pressure", new KafkaSpout(spoutConfig2), 1);
 
 		// 设置 一级 bolt
-		String Bolt1 = AlertBolt.class.getSimpleName();
-		builder.setBolt(Bolt1, new AlertBolt(), 4)
+		String Bolt1 = TransferBolt.class.getSimpleName();
+		builder.setBolt(Bolt1, new TransferBolt(), 4)
 				.shuffleGrouping(Spout + "_temper")
 				.shuffleGrouping(Spout + "_pressure");
 

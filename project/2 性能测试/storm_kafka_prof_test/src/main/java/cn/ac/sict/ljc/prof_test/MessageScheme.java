@@ -14,6 +14,8 @@ public class MessageScheme implements Scheme {
 	/* long: serialVersionUID */
 	private static final long serialVersionUID = -6604354654064765215L;
 
+	public static final String field = "msg";
+
 	@Override
 	public List<Object> deserialize(ByteBuffer ser) {
 		String msg = null;
@@ -27,6 +29,6 @@ public class MessageScheme implements Scheme {
 
 	@Override
 	public Fields getOutputFields() {
-		return new Fields("msg");
+		return new Fields(field);
 	}
 }

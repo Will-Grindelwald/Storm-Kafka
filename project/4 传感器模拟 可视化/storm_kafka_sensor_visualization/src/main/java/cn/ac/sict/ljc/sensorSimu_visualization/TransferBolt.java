@@ -5,7 +5,6 @@ import java.util.HashMap;
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseBasicBolt;
-import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.json.simple.JSONObject;
 
@@ -16,7 +15,7 @@ import redis.clients.jedis.JedisPoolConfig;
 /**
  * 
  */
-public class AlertBolt extends BaseBasicBolt {
+public class TransferBolt extends BaseBasicBolt {
 
 	/* long: serialVersionUID * description： */
 	private static final long serialVersionUID = 3307570869378763288L;
@@ -29,7 +28,7 @@ public class AlertBolt extends BaseBasicBolt {
 
 	@Override
 	public void execute(Tuple tuple, BasicOutputCollector collector) {
-		String[] msg = tuple.getStringByField("msg").split(":");
+		String[] msg = tuple.getStringByField(MessageScheme.field).split(":");
 		int type = Integer.valueOf(msg[1]); // 0 温度, 1 压力
 
 		JedisPool pool = new JedisPool(new JedisPoolConfig(), host, port);
@@ -41,14 +40,11 @@ public class AlertBolt extends BaseBasicBolt {
 			jedis.publish(sensorChannel[type], JSONObject.toJSONString(jsonMap));
 		}
 		pool.close();
-
 	}
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
 		// 声明本次 emit 出去的 field
-		declarer.declareStream("temper", new Fields("warningTemper"));
-		declarer.declareStream("pressure", new Fields("warningPressure"));
 	}
 
 }
