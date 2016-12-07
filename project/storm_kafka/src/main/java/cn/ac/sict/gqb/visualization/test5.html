@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/script/canvasjs.min.js"></script>
+    <style type="text/css">
+    .divlog {
+        height: 300px;
+        overflow: scroll
+    }
+    </style>
+</head>
+
+<body>
+    <script src="/socket.io/socket.io.js" type="text/javascript"></script>
+    <div id="chartContainer" style="height: 300px; width: 100%;">
+    </div>
+    <div>
+        <p>设定警戒值:
+            <input id="warnValue" type="text" value="0.2" pattern="[0-9]"></input>
+            <button id="set" onclick=updateWarnValue()>设定</button>
+        </p>
+    </div>
+    <div class="divlog">
+        <ul id="test"></ul>
+    </div>
+    <script type="text/javascript">
+    var socket = io.connect('http://localhost:99');
+    // dataPoints
+    var dataPoints1 = [];
+    var dataPoints2 = [];
+    var newValue = $('#warnValue').val();
+
+    var chart = new CanvasJS.Chart("chartContainer", {
+        zoomEnabled: true,
+        title: {
+            text: "Real Time Test5"
+        },
+        toolTip: {
+            shared: true
+        },
+        legend: {
+            verticalAlign: "top",
+            horizontalAlign: "center",
+            fontSize: 14,
+            fontWeight: "bold",
+            fontFamily: "calibri",
+            fontColor: "dimGrey"
+        },
+        axisX: {
+            title: "chart updates every 1 secs"
+        },
+        axisY: {
+            prefix: '',
+            includeZero: false,
+            stripLines: [{
+                value: newValue,
+                color: "red",
+                label: "警戒线"
+            }]
+        },
+        data: [{
+            // dataSeries1
+            type: "line",
+            xValueType: "dateTime",
+            showInLegend: true,
+            name: " A",
+            dataPoints: dataPoints1
+        }, {
+            // dataSeries2
+            type: "line",
+            xValueType: "dateTime",
+            showInLegend: true,
+            name: " B",
+            dataPoints: dataPoints2
+        }],
+        legend: {
+            cursor: "pointer",
+            itemclick: function(e) {
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else {
+                    e.dataSeries.visible = true;
+                }
+                chart.render();
+            }
+        }
+
+    });
+
+
+    // initial value
+    var yValue1 = 0;
+    var yValue2 = 0;
+    var dataLength = 50;
+
+    // 修复坐标点对应问题
+    var time = new Date();
+    time.setMilliseconds(00);
+
+    var updateChart = function(data) {
+
+        time.setTime(time.getTime() + 1000);
+        yValue1 = data.y1;
+        yValue2 = data.y2;
+        dataPoints1.push({
+            x: time.getTime(),
+            y: yValue1
+        });
+        dataPoints2.push({
+            x: time.getTime(),
+            y: yValue2
+        });
+
+
+        // updating legend text with  updated with y Value 
+        chart.options.data[0].legendText = "  A  " + yValue1;
+        chart.options.data[1].legendText = " B  " + yValue2;
+        if (dataPoints1.length > dataLength) {
+            dataPoints1.shift();
+        }
+        if (dataPoints2.length > dataLength) {
+            dataPoints2.shift();
+        }
+        chart.render();
+
+    };
+
+    socket.on('server', function(data) {
+        if (data.y1 > newValue) {
+            $("#test").prepend($("<li>").text(new Date(data.time).toLocaleString() + "  " + "A出现异常值：" + data.y1));
+        }
+        if (data.y2 > newValue) {
+            $("#test").prepend($("<li>").text(new Date(data.time).toLocaleString() + "  " + "B出现异常值：" + data.y2));
+        }
+        updateChart(data);
+    });
+
+    function updateWarnValue() {
+
+        if (newValue == '') {
+            alert("请输入数据！");
+        } else {
+            newValue = $('#warnValue').val();
+            chart.options.axisY.stripLines[0].value = newValue;
+
+            $('#test').empty();
+        }
+
+    }
+    </script>
+</body>
+
+</html>

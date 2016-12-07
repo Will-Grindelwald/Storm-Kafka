@@ -1,0 +1,13 @@
+{
+  "name": "bigdata-demo",
+  "version": "0.0.1",
+  "private": false,
+  "dependencies": {
+    "http": "*",
+    "redis": "^2.6.3",
+    "socket.io": "~0.9.16"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
