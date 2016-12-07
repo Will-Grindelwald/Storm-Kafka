@@ -32,25 +32,25 @@ public class SensorTopology {
 		String zkStr = configProps.getProperty("zkStr");
 		String zkRoot = configProps.getProperty("zkRoot");
 		String inputTopic_ljc_sensor_temper = configProps.getProperty("inputTopic_ljc_sensor_temper");
-		String spoutId_ljc_sensor_temper = configProps.getProperty("spoutId_ljc_sensor_temper");
+		String spoutId_ljc_sensor_visualization_temper = configProps.getProperty("spoutId_ljc_sensor_visualization_temper");
 
 		String inputTopic_ljc_sensor_pressure = configProps.getProperty("inputTopic_ljc_sensor_pressure");
-		String spoutId_ljc_sensor_pressure = configProps.getProperty("spoutId_ljc_sensor_pressure");
+		String spoutId_ljc_sensor_visualization_pressure = configProps.getProperty("spoutId_ljc_sensor_visualization_pressure");
 
-		log.info("\n inputTopic_ljc_sensor_temper = " + inputTopic_ljc_sensor_temper + "\n inputTopic_ljc_sensor_pressure = " + inputTopic_ljc_sensor_pressure + "\n spoutId1 = " + spoutId_ljc_sensor_temper + "\n spoutId2 = " + spoutId_ljc_sensor_pressure + "\n zkRoot = " + zkRoot);
+		log.info("\n inputTopic_ljc_sensor_temper = " + inputTopic_ljc_sensor_temper + "\n inputTopic_ljc_sensor_pressure = " + inputTopic_ljc_sensor_pressure + "\n spoutId1 = " + spoutId_ljc_sensor_visualization_temper + "\n spoutId2 = " + spoutId_ljc_sensor_visualization_pressure + "\n zkRoot = " + zkRoot);
 
 		// 定义 spoutConfig1
 		SpoutConfig spoutConfig1 = new SpoutConfig(new ZkHosts(zkStr, zkRoot),
 				inputTopic_ljc_sensor_temper,
 				zkRoot,
-				spoutId_ljc_sensor_temper
+				spoutId_ljc_sensor_visualization_temper
 		);
 
 		// 定义 spoutConfig2
 		SpoutConfig spoutConfig2 = new SpoutConfig(new ZkHosts(zkStr, zkRoot),
 				inputTopic_ljc_sensor_pressure,
 				zkRoot,
-				spoutId_ljc_sensor_pressure
+				spoutId_ljc_sensor_visualization_pressure
 		);
 
 		spoutConfig1.scheme = new SchemeAsMultiScheme(new MessageScheme()); // 自己实现的 Scheme, 输出 field 为 msg

@@ -1,4 +1,4 @@
-package cn.ac.sict.ljc.demo;
+package cn.ac.sict.ljc.wordcount;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -12,7 +12,7 @@ import org.apache.storm.tuple.Values;
 public class MessageScheme implements Scheme {
 
 	/* long: serialVersionUID */
-	private static final long serialVersionUID = -2329680114601734337L;
+	private static final long serialVersionUID = -2262911437633112301L;
 
 	@Override
 	public List<Object> deserialize(ByteBuffer ser) {

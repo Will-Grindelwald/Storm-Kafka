@@ -7,7 +7,7 @@ import org.apache.storm.generated.AlreadyAliveException;
 import org.apache.storm.generated.AuthorizationException;
 import org.apache.storm.generated.InvalidTopologyException;
 
-import cn.ac.sict.ljc.demo.WordCountTopology;
+import cn.ac.sict.ljc.wordcount.WordCountTopology;
 
 /**
  * storm 提交时指定此 Main 类为入口, 则运行所有配置了的拓扑
@@ -29,7 +29,6 @@ public class Main {
 
 		// 配置 cn.ac.sict.ljc.demo.WordCountTopology
 		WordCountTopology wordCountTopology = new WordCountTopology(configProps);
-		wordCountTopology.submit(configProps.getProperty("topologyName_ljc_demo"));
-
+		wordCountTopology.submit(configProps.getProperty("topologyName_ljc_wordcount"));
 	}
 }

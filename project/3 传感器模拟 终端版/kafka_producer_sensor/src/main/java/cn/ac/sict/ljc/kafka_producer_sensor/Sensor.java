@@ -1,6 +1,5 @@
 package cn.ac.sict.ljc.kafka_producer_sensor;
 
-
 /**
  * 模拟传感器: 温度: n 个, 压力: n 个
  */

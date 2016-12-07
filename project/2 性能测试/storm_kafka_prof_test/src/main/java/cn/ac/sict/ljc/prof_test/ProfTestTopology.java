@@ -63,12 +63,12 @@ public class ProfTestTopology {
 
 		// 设置 一级 bolt
 		String Bolt1 = CountBolt.class.getSimpleName();
-		builder.setBolt(Bolt1, new CountBolt(), 4) // 并行度 8
+		builder.setBolt(Bolt1, new CountBolt(), 4) // 并行度 4
 				.shuffleGrouping(Spout); // 上一级是 kafkaSpout, 随机分组
 
 		Properties producerProps = new Properties();
 		producerProps.put("bootstrap.servers", kafkaStr);
-		producerProps.put("acks", "1");
+		producerProps.put("acks", "all");
 		producerProps.put("key.serializer", StringSerializer.class.getName());
 		producerProps.put("value.serializer", StringSerializer.class.getName());
 

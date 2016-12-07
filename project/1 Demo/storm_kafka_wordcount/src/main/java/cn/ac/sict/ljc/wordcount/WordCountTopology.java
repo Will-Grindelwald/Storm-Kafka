@@ -1,4 +1,4 @@
-package cn.ac.sict.ljc.demo;
+package cn.ac.sict.ljc.wordcount;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +38,11 @@ public class WordCountTopology {
 		String zkStr = configProps.getProperty("zkStr");
 		String zkRoot = configProps.getProperty("zkRoot");
 		String kafkaStr = configProps.getProperty("kafkaStr");
-		String inputTopic_ljc_demo = configProps.getProperty("inputTopic_ljc_demo");
-		String outputTopic_ljc_demo = configProps.getProperty("outputTopic_ljc_demo");
-		String spoutId_ljc_demo = configProps.getProperty("spoutId_ljc_demo");
+		String inputTopic_ljc_wordcount = configProps.getProperty("inputTopic_ljc_wordcount");
+		String outputTopic_ljc_wordcount = configProps.getProperty("outputTopic_ljc_wordcount");
+		String spoutId_ljc_wordcount = configProps.getProperty("spoutId_ljc_wordcount");
 
-		log.info("\n inputTopic_ljc_demo = " + inputTopic_ljc_demo + "\n outputTopic_ljc_demo = " + outputTopic_ljc_demo + "\n spoutId = " + spoutId_ljc_demo);
+		log.info("\n inputTopic_ljc_wordcount = " + inputTopic_ljc_wordcount + "\n outputTopic_ljc_wordcount = " + outputTopic_ljc_wordcount + "\n spoutId = " + spoutId_ljc_wordcount);
 
 		// BrokerHosts 接口有 2 个实现类 StaticHosts 和 ZkHosts, ZkHosts 会定时(默认 60 秒)从 ZK 中更新 brokers 的信息(可以通过修改 host.refreshFreqSecs 来设置), StaticHosts 则不会
 		// 第二个参数 brokerZkPath 为 zookeeper 中存储 topic 的路径, kafka 的默认配置为 /brokers
@@ -50,9 +50,9 @@ public class WordCountTopology {
 
 		// 定义spoutConfig
 		SpoutConfig spoutConfig = new SpoutConfig(brokerHosts, // 第一个参数 hosts 是上面定义的 brokerHosts
-				inputTopic_ljc_demo,                           // 第二个参数 topic 是该 KafkaSpout 订阅的 topic 名称
+				inputTopic_ljc_wordcount,                      // 第二个参数 topic 是该 KafkaSpout 订阅的 topic 名称
 				zkRoot,                                        // 第三个参数 zkRoot 是存储消费的 offset(存储在 ZK 中了), 当该 topology 故障重启后会将故障期间未消费的 message 继续消费而不会丢失(可配置)
-				spoutId_ljc_demo                               // 第四个参数 id 是当前 spout 的唯一标识
+				spoutId_ljc_wordcount                          // 第四个参数 id 是当前 spout 的唯一标识
 		);
 
 		// 定义 kafkaSpout 如何解析数据, 这里是将 kafka producer 的 send 的数据放入到 String 类型的 str 中输出, str 是 StringSchema 定义的 field, 可以根据业务实现自己的 scheme
@@ -63,7 +63,7 @@ public class WordCountTopology {
 
 		// 设置 spout: KafkaSpout
 		String Spout = KafkaSpout.class.getSimpleName();
-		builder.setSpout(Spout, new KafkaSpout(spoutConfig), 1); // topic 的分区数(partitions)最好是 KafkaSpout 的并发度的倍数
+		builder.setSpout(Spout, new KafkaSpout(spoutConfig), 4); // topic 的分区数(partitions)最好是 KafkaSpout 的并发度的倍数
 
 		// 设置 一级 bolt
 		String Bolt1 = WordSplitBolt.class.getSimpleName();
@@ -83,7 +83,7 @@ public class WordCountTopology {
 
 		KafkaBolt<String, String> kafkaBolt = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)
-				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_demo))
+				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_wordcount))
 				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", "result")); // 没有 key, 只传 value
 
 		// 设置 三级 bolt: KafakBolt

@@ -30,6 +30,5 @@ public class Main {
 			sensorTopology.submit(null);
 		else
 			sensorTopology.submit(args[0]);
-
 	}
 }

@@ -38,26 +38,26 @@ public class SensorTopology {
 		String kafkaStr = configProps.getProperty("kafkaStr");
 		String inputTopic_ljc_sensor_temper = configProps.getProperty("inputTopic_ljc_sensor_temper");
 		String outputTopic_ljc_sensor_temper = configProps.getProperty("outputTopic_ljc_sensor_temper");
-		String spoutId_ljc_sensor_temper = configProps.getProperty("spoutId_ljc_sensor_temper");
+		String spoutId_ljc_sensor_terminal_temper = configProps.getProperty("spoutId_ljc_sensor_terminal_temper");
 		
 		String inputTopic_ljc_sensor_pressure = configProps.getProperty("inputTopic_ljc_sensor_pressure");
 		String outputTopic_ljc_sensor_pressure = configProps.getProperty("outputTopic_ljc_sensor_pressure");
-		String spoutId_ljc_sensor_pressure = configProps.getProperty("spoutId_ljc_sensor_pressure");
+		String spoutId_ljc_sensor_terminal_pressure = configProps.getProperty("spoutId_ljc_sensor_terminal_pressure");
 
-		log.info("\n inputTopic_ljc_sensor_temper = " + inputTopic_ljc_sensor_temper + "\n outputTopic_ljc_sensor_temper = " + outputTopic_ljc_sensor_temper + "\n inputTopic_ljc_sensor_pressure = " + inputTopic_ljc_sensor_pressure + "\n outputTopic_ljc_sensor_pressure = " + outputTopic_ljc_sensor_pressure + "\n spoutId1 = " + spoutId_ljc_sensor_temper + "\n spoutId2 = " + spoutId_ljc_sensor_pressure + "\n zkRoot = " + zkRoot);
+		log.info("\n inputTopic_ljc_sensor_temper = " + inputTopic_ljc_sensor_temper + "\n outputTopic_ljc_sensor_temper = " + outputTopic_ljc_sensor_temper + "\n inputTopic_ljc_sensor_pressure = " + inputTopic_ljc_sensor_pressure + "\n outputTopic_ljc_sensor_pressure = " + outputTopic_ljc_sensor_pressure + "\n spoutId1 = " + spoutId_ljc_sensor_terminal_temper + "\n spoutId2 = " + spoutId_ljc_sensor_terminal_pressure + "\n zkRoot = " + zkRoot);
 
 		// 定义 spoutConfig1
 		SpoutConfig spoutConfig1 = new SpoutConfig(new ZkHosts(zkStr, zkRoot),
 				inputTopic_ljc_sensor_temper,
 				zkRoot,
-				spoutId_ljc_sensor_temper
+				spoutId_ljc_sensor_terminal_temper
 		);
 		
 		// 定义 spoutConfig2
 		SpoutConfig spoutConfig2 = new SpoutConfig(new ZkHosts(zkStr, zkRoot),
 				inputTopic_ljc_sensor_pressure,
 				zkRoot,
-				spoutId_ljc_sensor_pressure
+				spoutId_ljc_sensor_terminal_pressure
 		);
 
 		spoutConfig1.scheme = new SchemeAsMultiScheme(new MessageScheme()); // 自己实现的 Scheme, 输出 field 为 msg
@@ -86,20 +86,20 @@ public class SensorTopology {
 		KafkaBolt<String, String> kafkaBolt1 = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)
 				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_sensor_temper))
-				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", "warningTemper")); // 没有 key, 只传 value
+				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", AlertBolt.fieldsTemper)); // 没有 key, 只传 value
 
 		// 定义 kafkaBolt2
 		KafkaBolt<String, String> kafkaBolt2 = new KafkaBolt<String, String>()
 				.withProducerProperties(producerProps)
 				.withTopicSelector(new DefaultTopicSelector(outputTopic_ljc_sensor_pressure))
-				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", "warningPressure")); // 没有 key, 只传 value
+				.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("", AlertBolt.fieldsPressure)); // 没有 key, 只传 value
 
 		// 设置 二级 bolt: KafakBolt
 		String Bolt2 = KafkaBolt.class.getSimpleName();
 		builder.setBolt(Bolt2 + "_temper", kafkaBolt1, 4)
-				.shuffleGrouping(Bolt1, "temper");
+				.shuffleGrouping(Bolt1, AlertBolt.sensorType[0][0]);
 		builder.setBolt(Bolt2 + "_pressure", kafkaBolt2, 4)
-				.shuffleGrouping(Bolt1, "pressure");
+				.shuffleGrouping(Bolt1, AlertBolt.sensorType[0][1]);
 	}
 
 	public void submit(String topologyName) throws AlreadyAliveException, InvalidTopologyException, AuthorizationException {

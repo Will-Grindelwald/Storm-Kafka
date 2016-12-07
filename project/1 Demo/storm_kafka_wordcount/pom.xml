@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>cn.ac.sict</groupId>
-	<artifactId>storm_kafka_demo</artifactId>
+	<artifactId>storm_kafka_wordcount</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
-	<name>storm_kafka_demo</name>
+	<name>storm_kafka_wordcount</name>
 
 	<repositories>
 	</repositories>

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class CountBolt extends BaseBasicBolt {
 
 	/* long: serialVersionUID * description： */
-	private static final long serialVersionUID = -3494794413248427509L;
+	private static final long serialVersionUID = -5636890972113477455L;
 
 	public Logger log = LoggerFactory.getLogger(CountBolt.class);
 	private static long count = 0, sum = 0;

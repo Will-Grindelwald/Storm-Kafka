@@ -1,4 +1,4 @@
-package cn.ac.sict.ljc.demo;
+package cn.ac.sict.ljc.wordcount;
 
 import java.util.HashMap;
 import java.util.Map;

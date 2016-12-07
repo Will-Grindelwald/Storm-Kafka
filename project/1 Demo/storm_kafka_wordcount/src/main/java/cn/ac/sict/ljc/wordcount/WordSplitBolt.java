@@ -1,4 +1,4 @@
-package cn.ac.sict.ljc.demo;
+package cn.ac.sict.ljc.wordcount;
 
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -13,7 +13,7 @@ import org.apache.storm.tuple.Values;
 public class WordSplitBolt extends BaseBasicBolt {
 
 	/* long: serialVersionUID * description： */
-	private static final long serialVersionUID = -3493794413248427509L;
+	private static final long serialVersionUID = -6589174891688028645L;
 
 	@Override
 	public void execute(Tuple tuple, BasicOutputCollector collector) {

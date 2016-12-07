@@ -46,7 +46,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>cn.ac.sict.ljc.redis_test.Test</mainClass>
+							<mainClass>cn.ac.sict.ljc.redis_test.TestRedis</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

@@ -13,10 +13,12 @@ import org.apache.storm.tuple.Values;
 public class AlertBolt extends BaseBasicBolt {
 
 	/* long: serialVersionUID * description： */
-	private static final long serialVersionUID = 3307570869378763288L;
+	private static final long serialVersionUID = 5409424749649068963L;
 
 	private static final double[][] Threshold = {{31, 69}, {3.05, 4.95}};
-	private static final String[][] sensorType = {{"ljc_sensor_temper", "ljc_sensor_pressure"}, {"温度", "气压"}};
+	public static final String[][] sensorType = {{"ljc_sensor_temper", "ljc_sensor_pressure"}, {"温度", "气压"}};
+	public static final String fieldsTemper = "warningTemper";
+	public static final String fieldsPressure = "warningPressure";
 
 	@Override
 	public void execute(Tuple tuple, BasicOutputCollector collector) {
@@ -33,8 +35,8 @@ public class AlertBolt extends BaseBasicBolt {
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
 		// 声明本次 emit 出去的 field
-		declarer.declareStream("temper", new Fields("warningTemper"));
-		declarer.declareStream("pressure", new Fields("warningPressure"));
+		declarer.declareStream(sensorType[0][0], new Fields(fieldsTemper));
+		declarer.declareStream(sensorType[0][1], new Fields(fieldsPressure));
 	}
 
 }

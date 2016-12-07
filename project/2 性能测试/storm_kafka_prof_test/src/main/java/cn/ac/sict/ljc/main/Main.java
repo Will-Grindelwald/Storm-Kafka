@@ -30,6 +30,5 @@ public class Main {
 		// 配置 cn.ac.sict.ljc.prof_test.ProfTestTopology
 		ProfTestTopology profTestTopology = new ProfTestTopology(configProps);
 		profTestTopology.submit(configProps.getProperty("topologyName_ljc_prof_test"));
-
 	}
 }

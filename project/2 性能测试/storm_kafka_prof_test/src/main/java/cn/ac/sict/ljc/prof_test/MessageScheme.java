@@ -12,7 +12,7 @@ import org.apache.storm.tuple.Values;
 public class MessageScheme implements Scheme {
 
 	/* long: serialVersionUID */
-	private static final long serialVersionUID = -2329680114601734337L;
+	private static final long serialVersionUID = -6604354654064765215L;
 
 	@Override
 	public List<Object> deserialize(ByteBuffer ser) {

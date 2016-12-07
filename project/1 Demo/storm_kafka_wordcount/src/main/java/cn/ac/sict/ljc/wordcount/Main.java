@@ -1,4 +1,4 @@
-package cn.ac.sict.ljc.demo;
+package cn.ac.sict.ljc.wordcount;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -33,6 +33,5 @@ public class Main {
 			wordCountTopology.submit(null); // 无参则本地模式
 		else
 			wordCountTopology.submit(args[0]); // 有参则集群模式
-
 	}
 }

@@ -29,7 +29,6 @@ public class Main {
 
 		// 配置 cn.ac.sict.ljc.demo.WordCountTopology
 		SensorTopology sensorTopology = new SensorTopology(configProps);
-		sensorTopology.submit(configProps.getProperty("topologyName_ljc_sensor"));
-
+		sensorTopology.submit(configProps.getProperty("topologyName_ljc_sensor_visualization"));
 	}
 }
