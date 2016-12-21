@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# != 0 ]
 then
-  echo "usage: ./kafka-start.sh"
+  echo "usage: ./start-kafka.sh"
   exit 1
 fi
 

@@ -10,3 +10,4 @@ cur=$(cd `dirname $0`; pwd)
 $cur/zserver.sh start
 $cur/start-storm.sh
 $cur/start-kafka.sh
+$cur/start-manager.sh

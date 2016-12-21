@@ -17,3 +17,4 @@ rm -rf $WORKDIR/storm-workdir/*
 rm -rf $STORM_HOME/logs/*
 
 rm -rf $KAFKA_MANAGER_HOME/kafka-manager-boot.log
+rm -rf $KAFKA_MANAGER_HOME/RUNNING_PID
