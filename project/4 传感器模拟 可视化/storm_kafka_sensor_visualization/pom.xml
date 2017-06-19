@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -8,12 +9,22 @@
 	<packaging>jar</packaging>
 	<name>storm_kafka_sensor_visualization</name>
 
-	<repositories>
-	</repositories>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- 定义主要依赖库的版本 -->
+		<jdk.version>1.7</jdk.version>
+		<junit.version>4.12</junit.version>
+		<storm.version>1.0.2</storm.version>
+		<kafka.version>0.9.0.1</kafka.version>
+		<redis.clients.version>2.9.0</redis.clients.version>
+		<com.googlecode.json-simple.version>1.1.1</com.googlecode.json-simple.version>
+		<!-- maven 插件版本 -->
+		<maven-assembly-plugin.version>3.0.0</maven-assembly-plugin.version>
+		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
 	</properties>
+
+	<repositories>
+	</repositories>
 
 	<dependencies>
 
@@ -21,7 +32,7 @@
 		<dependency>
 			<groupId>org.apache.storm</groupId>
 			<artifactId>storm-core</artifactId>
-			<version>1.0.2</version>
+			<version>${storm.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -29,14 +40,14 @@
 		<dependency>
 			<groupId>org.apache.storm</groupId>
 			<artifactId>storm-kafka</artifactId>
-			<version>1.0.2</version>
+			<version>${storm.version}</version>
 		</dependency>
 
 		<!-- kafka -->
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka_2.11</artifactId>
-			<version>0.9.0.1</version>
+			<version>${kafka.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.zookeeper</groupId>
@@ -57,14 +68,14 @@
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-clients</artifactId>
-			<version>0.9.0.1</version>
+			<version>${kafka.version}</version>
 		</dependency>
 
 		<!-- Redis java client API -->
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
-			<version>2.9.0</version>
+			<version>${redis.clients.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -73,7 +84,7 @@
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
-			<version>1.1.1</version>
+			<version>${com.googlecode.json-simple.version}</version>
 		</dependency>
 
 	</dependencies>
@@ -82,18 +93,28 @@
 
 		<plugins>
 
+			<!-- define the project compile level -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.6</version>
+				<!-- NOTE: Don't need groupId which is org.apache.maven.plugins by default. -->
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
-					<!-- 提交 topology 时要指定入口, 这里就不指定主类了
-					<archive>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven-assembly-plugin.version}</version>
+				<configuration>
+					<!-- 提交 topology 时要指定入口, 这里就不指定主类了 -->
+					<!-- <archive>
 						<manifest>
 							<mainClass></mainClass>
 						</manifest>
-					</archive>
-					 -->
+					</archive> -->
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
@@ -103,21 +124,10 @@
 						<id>make-assembly</id>
 						<phase>package</phase>
 						<goals>
-							<goal>assembly</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
 			</plugin>
 
 		</plugins>
