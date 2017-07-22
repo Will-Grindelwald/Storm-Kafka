@@ -1,0 +1,6 @@
+title: Storm-Kafka
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
