@@ -10,7 +10,7 @@ fi
 __CUR_PATH__=$3
 __INSTALL_PATH__=$4
 
-function GetKey(){
+function GetValue(){
   section=$(echo $1 | cut -d '.' -f 1)
   key=$(echo $1 | cut -d '.' -f 2)
   sed -n "/\[$section\]/,/\[.*\]/{
@@ -36,14 +36,14 @@ if [ $1 = 0 ]; then
   BROKER_LIST=localhost:9092
 else
   sed -i "/^broker.id=0/s/0/$2/g" $KAFKA_HOME/config/server.properties
-  sed -i "/^host.name=localhost/s/localhost/$(GetKey "kafka.HOST$2")/g" $KAFKA_HOME/config/server.properties
-  server_num=$(GetKey zookeeper.SERVER_NUM)
-  for((i=1;i<=server_num;i++)); do ZK_HOSTS_K+="$(GetKey "zookeeper.IP$i"):2181,"; done
+  sed -i "/^host.name=localhost/s/localhost/$(GetValue "kafka.HOST$2")/g" $KAFKA_HOME/config/server.properties
+  server_num=$(GetValue zookeeper.SERVER_NUM)
+  for((i=1;i<=server_num;i++)); do ZK_HOSTS_K+="$(GetValue "zookeeper.IP$i"):2181,"; done
   ZK_HOSTS_K=${ZK_HOSTS_K%,*}
   sed -i "/^zookeeper.connect=localhost:2181/s/localhost:2181/$ZK_HOSTS_K/g" $KAFKA_HOME/config/server.properties
-  broker_num=$(GetKey kafka.BROKER_NUM)
+  broker_num=$(GetValue kafka.BROKER_NUM)
   BROKER_LIST=
-  for((i=1;i<=broker_num;i++)); do BROKER_LIST+="$(GetKey "kafka.HOST$i"):9092,"; done
+  for((i=1;i<=broker_num;i++)); do BROKER_LIST+="$(GetValue "kafka.HOST$i"):9092,"; done
   BROKER_LIST=${BROKER_LIST%,*}
 fi
 sed -i "/^#log.dirs=\/tmp\/kafka-logs/a log.dirs=${__INSTALL_PATH__}/kafka-logs" $KAFKA_HOME/config/server.properties

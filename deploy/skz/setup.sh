@@ -18,7 +18,7 @@ __INSTALL_PATH__=/home/$(whoami)/work
 if [ -e ${__INSTALL_PATH__} ]; then mv -f ${__INSTALL_PATH__} ${__INSTALL_PATH__}_old; fi
 mkdir -p ${__INSTALL_PATH__}
 
-function GetKey(){
+function GetValue(){
   section=$(echo $1 | cut -d '.' -f 1)
   key=$(echo $1 | cut -d '.' -f 2)
   sed -n "/\[$section\]/,/\[.*\]/{
@@ -69,8 +69,8 @@ echo "下面将使用 sudo 权限配置防火墙"
 #sudo firewall-cmd --zone=public --add-port=9999/tcp --permanent
 
 # host mapping
-for((i=1;i<=$(GetKey host_mapping.NUM);i++)); do
-  sudo echo "$(GetKey "host_mapping.IP$i") $(GetKey "host_mapping.HOST$i")" >> /etc/hosts
-  sudo firewall-cmd --permanent --add-rich-rule="rule family='ipv4' source address='$(GetKey "host_mapping.IP$i")' accept"
+for((i=1;i<=$(GetValue host_mapping.NUM);i++)); do
+  sudo echo "$(GetValue "host_mapping.IP$i") $(GetValue "host_mapping.HOST$i")" >> /etc/hosts
+  sudo firewall-cmd --permanent --add-rich-rule="rule family='ipv4' source address='$(GetValue "host_mapping.IP$i")' accept"
 done
 sudo firewall-cmd --reload

@@ -10,7 +10,7 @@ fi
 __CUR_PATH__=$3
 __INSTALL_PATH__=$4
 
-function GetKey(){
+function GetValue(){
   section=$(echo $1 | cut -d '.' -f 1)
   key=$(echo $1 | cut -d '.' -f 2)
   sed -n "/\[$section\]/,/\[.*\]/{
@@ -37,10 +37,10 @@ echo "dataLogDir=${__INSTALL_PATH__}/zookeeper/logs" >> $ZK_HOME/conf/zoo.cfg
 if [ $1 = 0 ]; then
   ZK_HOSTS=localhost:2181
 else
-  server_num=$(GetKey zookeeper.SERVER_NUM)
+  server_num=$(GetValue zookeeper.SERVER_NUM)
   ZK_HOSTS=
   for((i=1;i<=server_num;i++)); do
-    IP=$(GetKey "zookeeper.IP$i")
+    IP=$(GetValue "zookeeper.IP$i")
     echo "server.$i=$IP:2888:3888" >> $ZK_HOME/conf/zoo.cfg
     ZK_HOSTS+="$IP:2181,"
   done

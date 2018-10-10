@@ -10,7 +10,7 @@ fi
 __CUR_PATH__=$3
 __INSTALL_PATH__=$4
 
-function GetKey(){
+function GetValue(){
   section=$(echo $1 | cut -d '.' -f 1)
   key=$(echo $1 | cut -d '.' -f 2)
   sed -n "/\[$section\]/,/\[.*\]/{
@@ -35,10 +35,10 @@ if [ $1 = 0 ]; then
   cp -f ${__CUR_PATH__}/conf/storm.yaml $STORM_HOME/conf/storm.yaml
 else
   echo "storm.zookeeper.servers:" >> $STORM_HOME/conf/storm.yaml
-  server_num=$(GetKey zookeeper.SERVER_NUM)
-  for((i=1;i<=server_num;i++)); do echo "    - \"$(GetKey "zookeeper.IP$i")\"" >> $STORM_HOME/conf/storm.yaml; done
-  nimbus_num=$(GetKey storm.NIMBUS_NUM)
-  for((i=1;i<=nimbus_num;i++)); do nimbus_seeds+="\"$(GetKey "storm.HOST$i")\","; done
+  server_num=$(GetValue zookeeper.SERVER_NUM)
+  for((i=1;i<=server_num;i++)); do echo "    - \"$(GetValue "zookeeper.IP$i")\"" >> $STORM_HOME/conf/storm.yaml; done
+  nimbus_num=$(GetValue storm.NIMBUS_NUM)
+  for((i=1;i<=nimbus_num;i++)); do nimbus_seeds+="\"$(GetValue "storm.HOST$i")\","; done
   nimbus_seeds=${nimbus_seeds%,*}
   echo "nimbus.seeds: [$nimbus_seeds]" >> $STORM_HOME/conf/storm.yaml
   echo "supervisor.slots.ports:" >> $STORM_HOME/conf/storm.yaml
